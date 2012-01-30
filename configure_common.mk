@@ -83,9 +83,3 @@ CONFIG_LIBAV:= \
 	--disable-mmx \
 	--disable-symver \
 	--enable-memalign-hack
-
-config.mak: configure.mk
-	./configure ${CONFIG_LIBAV}
-
-all: config.mak
-	./configure ${CONFIG_LIBAV}
