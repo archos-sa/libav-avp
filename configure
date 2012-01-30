@@ -532,6 +532,7 @@ check_deps(){
 
 print_config_h(){
     enabled $1 && v=1 || v=0
+    echo "#undef $2"
     echo "#define $2 $v"
 }
 
@@ -3372,7 +3373,7 @@ cat > $TMPH <<EOF
 #define AVCONV_DATADIR "$(eval c_escape $datadir)"
 #define CC_TYPE "$cc_type"
 #define CC_VERSION $cc_version
-#define restrict $_restrict
+#define restrict
 #define EXTERN_PREFIX "${extern_prefix}"
 #define EXTERN_ASM ${extern_prefix}
 #define SLIBSUF "$SLIBSUF"
