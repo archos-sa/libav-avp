@@ -21,6 +21,4 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_ARM_MODE := arm
 LOCAL_ARM_NEON := true
 
-ARM_MAKEFILE:=true
-
 include $(BUILD_SHARED_LIBRARY)
