@@ -750,6 +750,7 @@ void ff_rtp_parse_close(RTPDemuxContext *s)
     ff_rtp_reset_packet_queue(s);
     if (!strcmp(ff_rtp_enc_name(s->payload_type), "MP2T")) {
         ff_mpegts_parse_close(s->ts);
+        av_free(s->ts);
     }
     av_free(s);
 }

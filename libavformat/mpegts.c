@@ -2037,12 +2037,8 @@ static int mpegts_read_packet(AVFormatContext *s,
 static int mpegts_read_close(AVFormatContext *s)
 {
     MpegTSContext *ts = s->priv_data;
-    int i;
 
-    clear_programs(ts);
-
-    for(i=0;i<NB_PID_MAX;i++)
-        if (ts->pids[i]) mpegts_close_filter(ts, ts->pids[i]);
+    ff_mpegts_parse_close(ts);
 
     return 0;
 }
@@ -2210,6 +2206,11 @@ MpegTSContext *ff_mpegts_parse_open(AVFormatContext *s)
     /* no stream case, currently used by RTP */
     ts->raw_packet_size = TS_PACKET_SIZE;
     ts->stream = s;
+
+    mpegts_open_section_filter(ts, SDT_PID, sdt_cb, ts, 1);
+
+    mpegts_open_section_filter(ts, PAT_PID, pat_cb, ts, 1);
+
     ts->auto_guess = 1;
     return ts;
 }
@@ -2245,9 +2246,11 @@ void ff_mpegts_parse_close(MpegTSContext *ts)
 {
     int i;
 
+    clear_programs(ts);
+
     for(i=0;i<NB_PID_MAX;i++)
-        av_free(ts->pids[i]);
-    av_free(ts);
+        if (ts->pids[i]) mpegts_close_filter(ts, ts->pids[i]);
+
 }
 
 AVInputFormat ff_mpegts_demuxer = {
