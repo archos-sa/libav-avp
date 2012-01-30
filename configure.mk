@@ -1,9 +1,9 @@
-TOOLCHAIN=${ANDROID_SRC}/prebuilt/linux-x86/toolchain/arm-linux-androideabi-4.4.x
+TOOLCHAIN_PATH=${ANDROID_SRC}/prebuilt/linux-x86/toolchain
+TOOLCHAIN=${TOOLCHAIN_PATH}/arm-linux-androideabi-4.4.x
 CROSS=${TOOLCHAIN}/bin/arm-linux-androideabi-
-ANDROID_OUT=${ANDROID_SRC}/out/debug/target/product/$(TARGET_PRODUCT)
-CRT_PATH=${ANDROID_OUT}/obj/lib
-SYSTEM=${ANDROID_OUT}/system
-LDSCRIPTS_PATH=${ANDROID_SRC}/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/arm-eabi/lib/ldscripts
+CRT_PATH=${TOOLCHAIN}/lib/gcc/arm-linux-androideabi/4.4.3/armv7-a
+SYSTEM_LIB=${ANDROID_SRC}/prebuilt/ndk/android-ndk-r6/platforms/android-9/arch-arm/usr/lib
+LDSCRIPTS=${TOOLCHAIN_PATH}/arm-eabi-4.4.3/arm-eabi/lib/ldscripts/armelf.x
 
 BIONIC=${ANDROID_SRC}/bionic
 LIBC=${BIONIC}/libc
@@ -20,12 +20,12 @@ CFLAGS= \
         -I${BIONIC}/libm/include/arm
 
 LDFLAGS= \
-	-Wl,-T,${LDSCRIPTS_PATH}/armelf.x \
-	-Wl,-rpath-link=${SYSTEM}/lib \
-	-L${SYSTEM}/lib \
+	-Wl,-T,${LDSCRIPTS} \
+	-Wl,-rpath-link=${SYSTEM_LIB} \
+	-L${SYSTEM_LIB} \
 	-nostdlib \
-	${CRT_PATH}/crtbegin_dynamic.o \
-	${CRT_PATH}/crtend_android.o \
+	${CRT_PATH}/crtbegin.o \
+	${CRT_PATH}/crtend.o \
 	-lc -lm -ldl
 
 include configure_common.mk
