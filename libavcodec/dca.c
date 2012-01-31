@@ -56,6 +56,9 @@
 #define DCA_BLOCKS_MAX        (16)
 #define DCA_LFE_MAX            (3)
 
+int av_dca_convert_bitstream(const uint8_t * src, int src_size, uint8_t * dst,
+                             int max_size);
+
 enum DCAMode {
     DCA_MONO = 0,
     DCA_CHANNEL,
@@ -1363,7 +1366,7 @@ static int dca_decode_block(DCAContext *s, int base_channel, int block_index)
 /**
  * Convert bitstream to one representation based on sync marker
  */
-static int dca_convert_bitstream(const uint8_t *src, int src_size, uint8_t *dst,
+int av_dca_convert_bitstream(const uint8_t *src, int src_size, uint8_t *dst,
                                  int max_size)
 {
     uint32_t mrk;
@@ -1688,7 +1691,7 @@ static int dca_decode_frame(AVCodecContext *avctx, void *data,
 
     s->xch_present = 0;
 
-    s->dca_buffer_size = dca_convert_bitstream(buf, buf_size, s->dca_buffer,
+    s->dca_buffer_size = av_dca_convert_bitstream(buf, buf_size, s->dca_buffer,
                                                DCA_MAX_FRAME_SIZE + DCA_MAX_EXSS_HEADER_SIZE);
     if (s->dca_buffer_size == AVERROR_INVALIDDATA) {
         av_log(avctx, AV_LOG_ERROR, "Not a valid DCA frame\n");
