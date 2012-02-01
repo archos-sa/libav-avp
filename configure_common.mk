@@ -26,6 +26,7 @@ CONFIG_LIBAV:= \
 	--enable-decoder=wmavoice \
 	--enable-decoder=wavpack \
         --enable-decoder=tta \
+	--enable-decoder=vorbis \
 	\
 	--enable-decoder=msmpeg4v1 \
 	--enable-decoder=msmpeg4v2 \
