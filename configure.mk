@@ -28,10 +28,10 @@ LDFLAGS= \
 	${CRT_PATH}/crtend.o \
 	-lc -lm -ldl
 
-include configure_common.mk
+include $(LIBAV_DIR)/configure_common.mk
 
-config.mak: configure.mk configure_common.mk configure
-	./configure --target-os=linux \
+config.mak: $(LIBAV_DIR)/configure.mk $(LIBAV_DIR)/configure_common.mk $(LIBAV_DIR)/configure
+	$(LIBAV_DIR)/configure --target-os=linux \
 		--arch=armv7a \
 		--enable-cross-compile \
 		--cc=${CROSS}gcc \
@@ -42,5 +42,7 @@ config.mak: configure.mk configure_common.mk configure
 		--prefix=/system  \
 		--libdir=/system/lib \
 		${CONFIG_LIBAV}
+	mkdir -p $(INCLUDE_OUT_DIR)/libavutil
+	cp libavutil/avconfig.h $(INCLUDE_OUT_DIR)/libavutil/avconfig.h
 
 all: config.mak
