@@ -4176,4 +4176,6 @@ enum AVMediaType avcodec_get_type(enum CodecID codec_id);
  */
 const AVClass *avcodec_get_class(void);
 
+#define AV_HAS_DCA_CONVERT_BITSTREAM
+
 #endif /* AVCODEC_AVCODEC_H */
