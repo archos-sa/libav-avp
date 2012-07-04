@@ -49,7 +49,6 @@ config.log
 /tools/cws2fws
 /tools/graph2dot
 /tools/ismindex
-/tools/lavfi-showfiltfmts
 /tools/pktdumper
 /tools/probetest
 /tools/qt-faststart
