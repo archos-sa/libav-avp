@@ -1602,6 +1602,9 @@ doc_deps="texi2html"
 
 # tests
 
+mpg_test_deps="mpeg1system_muxer mpegps_demuxer"
+seek_lavf_mxf_d10_test_deps="mxf_d10_test"
+
 test_deps(){
     suf1=$1
     suf2=$2
@@ -1614,8 +1617,6 @@ test_deps(){
         done
     done
 }
-
-seek_lavf_mxf_d10_test_deps="mxf_d10_test"
 
 test_deps _muxer _demuxer                                               \
     aiff                                                                \
@@ -1641,8 +1642,6 @@ test_deps _muxer _demuxer                                               \
     voc                                                                 \
     wav                                                                 \
     yuv4mpegpipe=yuv4mpeg                                               \
-
-mpg_test_deps="mpeg1system_muxer mpegps_demuxer"
 
 # default parameters
 
