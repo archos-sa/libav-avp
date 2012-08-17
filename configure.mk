@@ -1,9 +1,9 @@
-TOOLCHAIN_PATH=${ANDROID_SRC}/prebuilt/linux-x86/toolchain
-TOOLCHAIN=${TOOLCHAIN_PATH}/arm-linux-androideabi-4.4.x
+TOOLCHAIN_PATH=${ANDROID_SRC}/prebuilts/gcc/linux-x86/arm/
+TOOLCHAIN=${TOOLCHAIN_PATH}/arm-linux-androideabi-4.6
 CROSS=${TOOLCHAIN}/bin/arm-linux-androideabi-
-CRT_PATH=${TOOLCHAIN}/lib/gcc/arm-linux-androideabi/4.4.3/armv7-a
-SYSTEM_LIB=${ANDROID_SRC}/prebuilt/ndk/android-ndk-r6/platforms/android-9/arch-arm/usr/lib
-LDSCRIPTS=${TOOLCHAIN_PATH}/arm-eabi-4.4.3/arm-eabi/lib/ldscripts/armelf.x
+CRT_PATH=${TOOLCHAIN}/lib/gcc/arm-linux-androideabi/4.6.x-google/armv7-a
+SYSTEM_LIB=${ANDROID_SRC}/prebuilts/ndk/android-ndk-r6/platforms/android-9/arch-arm/usr/lib
+LDSCRIPTS=${TOOLCHAIN_PATH}/arm-eabi-4.6/arm-eabi/lib/ldscripts/armelf.x
 
 BIONIC=${ANDROID_SRC}/bionic
 LIBC=${BIONIC}/libc
