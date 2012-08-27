@@ -4736,7 +4736,7 @@ static void vc1_decode_skip_blocks(VC1Context *v)
     s->pict_type = AV_PICTURE_TYPE_P;
 }
 
-static void vc1_decode_blocks(VC1Context *v)
+void ff_vc1_decode_blocks(VC1Context *v)
 {
 
     v->s.esc3_level_length = 0;
@@ -5050,7 +5050,7 @@ static void vc1_sprite_flush(AVCodecContext *avctx)
 
 #endif
 
-static av_cold int vc1_decode_init_alloc_tables(VC1Context *v)
+av_cold int ff_vc1_decode_init_alloc_tables(VC1Context *v)
 {
     MpegEncContext *s = &v->s;
     int i;
@@ -5116,6 +5116,21 @@ static av_cold int vc1_decode_init_alloc_tables(VC1Context *v)
     return 0;
 }
 
+av_cold void ff_vc1_init_transposed_scantables(VC1Context *v)
+{
+    int i;
+    for (i = 0; i < 64; i++) {
+#define transpose(x) ((x >> 3) | ((x & 7) << 3))
+        v->zz_8x8[0][i] = transpose(ff_wmv1_scantable[0][i]);
+        v->zz_8x8[1][i] = transpose(ff_wmv1_scantable[1][i]);
+        v->zz_8x8[2][i] = transpose(ff_wmv1_scantable[2][i]);
+        v->zz_8x8[3][i] = transpose(ff_wmv1_scantable[3][i]);
+        v->zzi_8x8[i]   = transpose(ff_vc1_adv_interlaced_8x8_zz[i]);
+    }
+    v->left_blk_sh = 0;
+    v->top_blk_sh  = 3;
+}
+
 /** Initialize a VC1/WMV3 decoder
  * @todo TODO: Handle VC-1 IDUs (Transport level?)
  * @todo TODO: Decypher remaining bits in extra_data
@@ -5125,7 +5140,6 @@ static av_cold int vc1_decode_init(AVCodecContext *avctx)
     VC1Context *v = avctx->priv_data;
     MpegEncContext *s = &v->s;
     GetBitContext gb;
-    int i;
 
     /* save the container output size for WMImage */
     v->output_width  = avctx->width;
@@ -5228,16 +5242,7 @@ static av_cold int vc1_decode_init(AVCodecContext *avctx)
     s->mb_height = (avctx->coded_height + 15) >> 4;
 
     if (v->profile == PROFILE_ADVANCED || v->res_fasttx) {
-        for (i = 0; i < 64; i++) {
-#define transpose(x) ((x >> 3) | ((x & 7) << 3))
-            v->zz_8x8[0][i] = transpose(ff_wmv1_scantable[0][i]);
-            v->zz_8x8[1][i] = transpose(ff_wmv1_scantable[1][i]);
-            v->zz_8x8[2][i] = transpose(ff_wmv1_scantable[2][i]);
-            v->zz_8x8[3][i] = transpose(ff_wmv1_scantable[3][i]);
-            v->zzi_8x8[i] = transpose(ff_vc1_adv_interlaced_8x8_zz[i]);
-        }
-        v->left_blk_sh = 0;
-        v->top_blk_sh  = 3;
+        ff_vc1_init_transposed_scantables(v);
     } else {
         memcpy(v->zz_8x8, ff_wmv1_scantable, 4*64);
         v->left_blk_sh = 3;
@@ -5263,7 +5268,7 @@ static av_cold int vc1_decode_init(AVCodecContext *avctx)
 /** Close a VC1/WMV3 decoder
  * @warning Initial try at using MpegEncContext stuff
  */
-static av_cold int vc1_decode_end(AVCodecContext *avctx)
+av_cold int ff_vc1_decode_end(AVCodecContext *avctx)
 {
     VC1Context *v = avctx->priv_data;
     int i;
@@ -5452,11 +5457,11 @@ static int vc1_decode_frame(AVCodecContext *avctx, void *data,
     if (s->context_initialized &&
         (s->width  != avctx->coded_width ||
          s->height != avctx->coded_height)) {
-        vc1_decode_end(avctx);
+        ff_vc1_decode_end(avctx);
     }
 
     if (!s->context_initialized) {
-        if (ff_msmpeg4_decode_init(avctx) < 0 || vc1_decode_init_alloc_tables(v) < 0)
+        if (ff_msmpeg4_decode_init(avctx) < 0 || ff_vc1_decode_init_alloc_tables(v) < 0)
             return -1;
 
         s->low_delay = !avctx->has_b_frames || v->res_sprite;
@@ -5601,7 +5606,7 @@ static int vc1_decode_frame(AVCodecContext *avctx, void *data,
                 s->end_mb_y = (i == n_slices     ) ? mb_height : FFMIN(mb_height, slices[i].mby_start % mb_height);
             else
                 s->end_mb_y = (i <= n_slices1 + 1) ? mb_height : FFMIN(mb_height, slices[i].mby_start % mb_height);
-            vc1_decode_blocks(v);
+            ff_vc1_decode_blocks(v);
             if (i != n_slices)
                 s->gb = slices[i].gb;
         }
@@ -5679,7 +5684,7 @@ AVCodec ff_vc1_decoder = {
     .id             = AV_CODEC_ID_VC1,
     .priv_data_size = sizeof(VC1Context),
     .init           = vc1_decode_init,
-    .close          = vc1_decode_end,
+    .close          = ff_vc1_decode_end,
     .decode         = vc1_decode_frame,
     .capabilities   = CODEC_CAP_DR1 | CODEC_CAP_DELAY,
     .long_name      = NULL_IF_CONFIG_SMALL("SMPTE VC-1"),
@@ -5694,7 +5699,7 @@ AVCodec ff_wmv3_decoder = {
     .id             = AV_CODEC_ID_WMV3,
     .priv_data_size = sizeof(VC1Context),
     .init           = vc1_decode_init,
-    .close          = vc1_decode_end,
+    .close          = ff_vc1_decode_end,
     .decode         = vc1_decode_frame,
     .capabilities   = CODEC_CAP_DR1 | CODEC_CAP_DELAY,
     .long_name      = NULL_IF_CONFIG_SMALL("Windows Media Video 9"),
@@ -5710,7 +5715,7 @@ AVCodec ff_wmv3_vdpau_decoder = {
     .id             = AV_CODEC_ID_WMV3,
     .priv_data_size = sizeof(VC1Context),
     .init           = vc1_decode_init,
-    .close          = vc1_decode_end,
+    .close          = ff_vc1_decode_end,
     .decode         = vc1_decode_frame,
     .capabilities   = CODEC_CAP_DR1 | CODEC_CAP_DELAY | CODEC_CAP_HWACCEL_VDPAU,
     .long_name      = NULL_IF_CONFIG_SMALL("Windows Media Video 9 VDPAU"),
@@ -5726,7 +5731,7 @@ AVCodec ff_vc1_vdpau_decoder = {
     .id             = AV_CODEC_ID_VC1,
     .priv_data_size = sizeof(VC1Context),
     .init           = vc1_decode_init,
-    .close          = vc1_decode_end,
+    .close          = ff_vc1_decode_end,
     .decode         = vc1_decode_frame,
     .capabilities   = CODEC_CAP_DR1 | CODEC_CAP_DELAY | CODEC_CAP_HWACCEL_VDPAU,
     .long_name      = NULL_IF_CONFIG_SMALL("SMPTE VC-1 VDPAU"),
@@ -5742,7 +5747,7 @@ AVCodec ff_wmv3image_decoder = {
     .id             = AV_CODEC_ID_WMV3IMAGE,
     .priv_data_size = sizeof(VC1Context),
     .init           = vc1_decode_init,
-    .close          = vc1_decode_end,
+    .close          = ff_vc1_decode_end,
     .decode         = vc1_decode_frame,
     .capabilities   = CODEC_CAP_DR1,
     .flush          = vc1_sprite_flush,
@@ -5758,7 +5763,7 @@ AVCodec ff_vc1image_decoder = {
     .id             = AV_CODEC_ID_VC1IMAGE,
     .priv_data_size = sizeof(VC1Context),
     .init           = vc1_decode_init,
-    .close          = vc1_decode_end,
+    .close          = ff_vc1_decode_end,
     .decode         = vc1_decode_frame,
     .capabilities   = CODEC_CAP_DR1,
     .flush          = vc1_sprite_flush,
