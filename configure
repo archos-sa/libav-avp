@@ -864,6 +864,9 @@ check_exec_crash(){
 static void sighandler(int sig){
     raise(SIGTERM);
 }
+int foo(void){
+    $code
+}
 int main(void){
     signal(SIGILL, sighandler);
     signal(SIGFPE, sighandler);
@@ -871,7 +874,7 @@ int main(void){
 #ifdef SIGBUS
     signal(SIGBUS, sighandler);
 #endif
-    { $code }
+    foo();
 }
 EOF
 }
