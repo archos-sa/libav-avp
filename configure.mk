@@ -1,23 +1,16 @@
-TOOLCHAIN_PATH=${ANDROID_SRC}/prebuilts/gcc/linux-x86/arm/
-TOOLCHAIN=${TOOLCHAIN_PATH}/arm-linux-androideabi-4.6
+TOOLCHAIN_PATH=${NDK_ROOT}/toolchains
+TOOLCHAIN=${TOOLCHAIN_PATH}/arm-linux-androideabi-4.6/prebuilt/linux-x86
 CROSS=${TOOLCHAIN}/bin/arm-linux-androideabi-
 CRT_PATH=${TOOLCHAIN}/lib/gcc/arm-linux-androideabi/4.6.x-google/armv7-a
-SYSTEM_LIB=${ANDROID_SRC}/prebuilts/ndk/android-ndk-r6/platforms/android-9/arch-arm/usr/lib
-LDSCRIPTS=${TOOLCHAIN_PATH}/arm-eabi-4.6/arm-eabi/lib/ldscripts/armelf.x
-
-BIONIC=${ANDROID_SRC}/bionic
-LIBC=${BIONIC}/libc
+SYSTEM_LIB=${NDK_ROOT}/platforms/android-9/arch-arm/usr/lib
+LDSCRIPTS=${TOOLCHAIN}/arm-linux-androideabi/lib/ldscripts/armelf_linux_eabi.x
 
 CFLAGS= \
 	-fPIC -DANDROID -DPIC \
 	-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -marm \
-	-I${LIBC}/arch-arm/include \
-        -I${LIBC}/include \
-        -I${LIBC}/libstdc++/include \
-        -I${LIBC}/kernel/common \
-        -I${LIBC}/kernel/arch-arm \
-        -I${BIONIC}/libm/include \
-        -I${BIONIC}/libm/include/arm
+	-I$(NDK_ROOT)/platforms/android-9/arch-arm/usr/include \
+	-I$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.6/include \
+	-I$(TOOLCHAIN)/include
 
 LDFLAGS= \
 	-Wl,-T,${LDSCRIPTS} \
