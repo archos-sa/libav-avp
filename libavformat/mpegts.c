@@ -1405,7 +1405,7 @@ static void pmt_cb(MpegTSFilter *filter, const uint8_t *section, int section_len
     int i;
 
     av_dlog(ts->stream, "PMT: len %i\n", section_len);
-    hex_dump_debug(ts->stream, (uint8_t *)section, section_len);
+    hex_dump_debug(ts->stream, section, section_len);
 
     p_end = section + section_len - 4;
     p = section;
@@ -1542,7 +1542,7 @@ static void pat_cb(MpegTSFilter *filter, const uint8_t *section, int section_len
     int sid, pmt_pid;
 
     av_dlog(ts->stream, "PAT:\n");
-    hex_dump_debug(ts->stream, (uint8_t *)section, section_len);
+    hex_dump_debug(ts->stream, section, section_len);
 
     p_end = section + section_len - 4;
     p = section;
@@ -1586,7 +1586,7 @@ static void sdt_cb(MpegTSFilter *filter, const uint8_t *section, int section_len
     char *name, *provider_name;
 
     av_dlog(ts->stream, "SDT:\n");
-    hex_dump_debug(ts->stream, (uint8_t *)section, section_len);
+    hex_dump_debug(ts->stream, section, section_len);
 
     p_end = section + section_len - 4;
     p = section;
