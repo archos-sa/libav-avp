@@ -2797,7 +2797,6 @@ case $target_os in
         dlltool="${cross_prefix}dlltool"
         ranlib=:
         enable dos_paths
-        check_cflags -fno-common
         add_cppflags -U__STRICT_ANSI__
         ;;
     cygwin*)
@@ -2813,7 +2812,6 @@ case $target_os in
         SHFLAGS='-shared -Wl,--out-implib,$(SUBDIR)lib$(FULLNAME).dll.a'
         objformat="win32"
         enable dos_paths
-        check_cflags -fno-common
         add_cppflags -U__STRICT_ANSI__
         ;;
     *-dos|freedos|opendos)
