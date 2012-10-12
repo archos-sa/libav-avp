@@ -1,5 +1,4 @@
-CONFIG_LIBAV:= \
-	--enable-shared \
+CONFIG_LIBAV="--enable-shared \
 	--disable-bzlib \
 	--disable-sse \
 	--disable-libfaac \
@@ -83,4 +82,4 @@ CONFIG_LIBAV:= \
 	--disable-static \
 	--disable-mmx \
 	--disable-symver \
-	--enable-memalign-hack
+	--enable-memalign-hack"
