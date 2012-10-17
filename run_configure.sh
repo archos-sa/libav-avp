@@ -1,7 +1,6 @@
 #!/bin/sh
 
-LIBAV_DIR=.
-NDK_ROOT=${LIBAV_DIR}/../../android-ndk
+NDK_ROOT=../../android-ndk
 
 TOOLCHAIN_PATH=${NDK_ROOT}/toolchains
 TOOLCHAIN=${TOOLCHAIN_PATH}/arm-linux-androideabi-4.6/prebuilt/linux-x86
@@ -24,16 +23,20 @@ LDFLAGS="-Wl,-T,${LDSCRIPTS} \
 	${CRT_PATH}/crtend.o \
 	-lc -lm -ldl"
 
-. ${LIBAV_DIR}/config_libav.sh
+for type in base archos full;do
+	. ./config_${type}.sh
 
-${LIBAV_DIR}/configure --target-os=linux \
-	--arch=armv7a \
-	--enable-cross-compile \
-	--cc=${CROSS}gcc \
-	--cross-prefix=${CROSS} \
-	--nm=${CROSS}nm \
-	--extra-cflags="${CFLAGS}" \
-	--extra-ldflags="${LDFLAGS}" \
-	--prefix=/system  \
-	--libdir=/system/lib \
-	${CONFIG_LIBAV}
+	./configure --target-os=linux \
+		--arch=armv7a \
+		--enable-cross-compile \
+		--cc=${CROSS}gcc \
+		--cross-prefix=${CROSS} \
+		--nm=${CROSS}nm \
+		--extra-cflags="${CFLAGS}" \
+		--extra-ldflags="${LDFLAGS}" \
+		--prefix=/system  \
+		--libdir=/system/lib \
+		${CONFIG_LIBAV}
+	mv config.mak ndk/${type}
+	mv config.h ndk/${type}
+done

@@ -1,7 +1,7 @@
 # LOCAL_PATH is one of libavutil, libavcodec, libavformat, or libswscale
 
 #include $(LOCAL_PATH)/../config-$(TARGET_ARCH).mak
-include $(LOCAL_PATH)/../config.mak
+include $(LOCAL_PATH)/../ndk/$(LIBAV_CONFIG_TYPE)/config.mak
 
 SRC_PATH := $(LOCAL_PATH)/..
 SUBDIR := $(notdir $(LOCAL_PATH))/
