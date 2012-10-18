@@ -1,4 +1,4 @@
-LIBAV_CONFIG_TYPE := full
+LIBAV_CONFIG_TYPE := archos
 
 LOCAL_PATH := $(call my-dir)
 LIBAV_DIR := $(LOCAL_PATH)/../../..
