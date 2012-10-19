@@ -6,6 +6,8 @@ include $(LOCAL_PATH)/../ndk/$(LIBAV_CONFIG_TYPE)/config.mak
 SRC_PATH := $(LOCAL_PATH)/..
 SUBDIR := $(notdir $(LOCAL_PATH))/
 
+FFLIBS :=
+FFLIBS-yes :=
 OBJS :=
 OBJS-yes :=
 ARMV5TE-OBJS :=
@@ -34,7 +36,7 @@ include $(SRC_PATH)/arch.mak
 OBJS += $(OBJS-yes)
 
 FFNAME := lib$(NAME)
-AFFLIBS := $(addprefix lib,$(FFLIBS))
+AFFLIBS := $(addprefix lib,$(FFLIBS-yes) $(FFLIBS))
 
 FFCFLAGS  = -DHAVE_AV_CONFIG_H -Wno-sign-compare -Wno-switch -Wno-pointer-sign -std=c99
 
