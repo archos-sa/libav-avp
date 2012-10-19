@@ -16,7 +16,6 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-decoder=cook \
 	--enable-decoder=flac \
 	--enable-decoder=aac \
-	--enable-decoder=mp2 \
 	--enable-decoder=mp3 \
 	--enable-decoder=wmav2 \
 	--enable-decoder=wmapro \
