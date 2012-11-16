@@ -73,6 +73,7 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-parser=mpegaudio \
 	--enable-parser=mpegvideo \
 	--enable-parser=flac \
+	--enable-parser=dca \
 	\
 	--disable-static \
 	--disable-mmx \
