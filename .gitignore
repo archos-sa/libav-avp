@@ -1,3 +1,6 @@
+ndk/base/libs/
+ndk/archos/libs/
+ndk/full/libs/
 obj
 .config
 .version
