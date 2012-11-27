@@ -30,6 +30,8 @@
 
 #if HAVE_ARMV6
 
+#pragma GCC optimize ("O2")
+
 #define FASTDIV FASTDIV
 static av_always_inline av_const int FASTDIV(int a, int b)
 {
