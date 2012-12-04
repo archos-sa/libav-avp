@@ -78,5 +78,7 @@ CONFIG_LIBAV="--enable-shared \
 	--disable-mmx \
 	--disable-symver \
 	--enable-memalign-hack \
-	--disable-armvfp
+        --disable-armv6 \
+	--disable-armv6t2 \
+	--disable-armvfp \
 	--disable-neon"

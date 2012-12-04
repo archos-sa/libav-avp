@@ -7,5 +7,7 @@ CONFIG_LIBAV="${CONFIG_LIBAV} \
 	--enable-demuxer=ac3 \
 	\
 	--enable-parser=dca \
-	--disable-armvfp
+        --disable-armv6 \
+	--disable-armv6t2 \
+	--disable-armvfp \
 	--disable-neon"

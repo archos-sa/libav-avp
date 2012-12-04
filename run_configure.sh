@@ -51,7 +51,7 @@ for type in base_no_neon archos_no_neon full_no_neon;do
 	. ./config_${type}.sh
 
 	./configure --target-os=linux \
-		--arch=armv7a \
+		--arch=armv5te \
 		--enable-cross-compile \
 		--cc=${CROSS}gcc \
 		--cross-prefix=${CROSS} \
