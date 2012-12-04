@@ -15,6 +15,12 @@ CFLAGS="-fPIC -DANDROID -DPIC \
 	-I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/4.6/include \
 	-I${TOOLCHAIN}/include"
 
+CFLAGS_NO_NEON="-fPIC -DANDROID -DPIC \
+	-march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -marm \
+	-I${NDK_ROOT}/platforms/android-9/arch-arm/usr/include \
+	-I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/4.6/include \
+	-I${TOOLCHAIN}/include"
+
 LDFLAGS="-Wl,-T,${LDSCRIPTS} \
 	-Wl,-rpath-link=${SYSTEM_LIB} \
 	-L${SYSTEM_LIB} \
@@ -33,6 +39,24 @@ for type in base archos full;do
 		--cross-prefix=${CROSS} \
 		--nm=${CROSS}nm \
 		--extra-cflags="${CFLAGS}" \
+		--extra-ldflags="${LDFLAGS}" \
+		--prefix=/system  \
+		--libdir=/system/lib \
+		${CONFIG_LIBAV}
+	mv config.mak ndk/${type}
+	mv config.h ndk/${type}
+done
+
+for type in base_no_neon archos_no_neon full_no_neon;do
+	. ./config_${type}.sh
+
+	./configure --target-os=linux \
+		--arch=armv7a \
+		--enable-cross-compile \
+		--cc=${CROSS}gcc \
+		--cross-prefix=${CROSS} \
+		--nm=${CROSS}nm \
+		--extra-cflags="${CFLAGS_NO_NEON}" \
 		--extra-ldflags="${LDFLAGS}" \
 		--prefix=/system  \
 		--libdir=/system/lib \
