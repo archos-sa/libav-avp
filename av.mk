@@ -35,8 +35,13 @@ include $(SRC_PATH)/arch.mak
 # collect objects
 OBJS += $(OBJS-yes)
 
+ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 FFNAME := lib$(NAME)
 AFFLIBS := $(addprefix lib,$(FFLIBS-yes) $(FFLIBS))
+else
+FFNAME := $(addsuffix _no_neon,lib$(NAME))
+AFFLIBS := $(addsuffix _no_neon,$(addprefix lib,$(FFLIBS-yes) $(FFLIBS)))
+endif
 
 FFCFLAGS  = -DHAVE_AV_CONFIG_H -Wno-sign-compare -Wno-switch -Wno-pointer-sign -std=c99
 
