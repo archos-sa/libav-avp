@@ -9,7 +9,7 @@ CRT_PATH=${TOOLCHAIN}/lib/gcc/arm-linux-androideabi/4.6.x-google/armv7-a
 SYSTEM_LIB=${NDK_ROOT}/platforms/android-9/arch-arm/usr/lib
 LDSCRIPTS=${TOOLCHAIN}/arm-linux-androideabi/lib/ldscripts/armelf_linux_eabi.x
 
-CFLAGS="-fPIC -DANDROID -DPIC \
+CFLAGS_NEON="-fPIC -DANDROID -DPIC \
 	-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -marm \
 	-I${NDK_ROOT}/platforms/android-9/arch-arm/usr/include \
 	-I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/4.6/include \
@@ -29,38 +29,44 @@ LDFLAGS="-Wl,-T,${LDSCRIPTS} \
 	${CRT_PATH}/crtend.o \
 	-lc -lm -ldl"
 
+CONFIG_LIBAV_EXTRA_NO_NEON="--disable-armv6 \
+	--disable-armv6t2 \
+	--disable-armvfp \
+	--disable-neon"
+
 for type in base archos full;do
-	. ./config_${type}.sh
+	for cpu_type in "neon" "no_neon";do
+		out_path=
+		arch=
+		cflags=
+		config_libav=
+		. ./config_${type}.sh
 
-	./configure --target-os=linux \
-		--arch=armv7a \
-		--enable-cross-compile \
-		--cc=${CROSS}gcc \
-		--cross-prefix=${CROSS} \
-		--nm=${CROSS}nm \
-		--extra-cflags="${CFLAGS}" \
-		--extra-ldflags="${LDFLAGS}" \
-		--prefix=/system  \
-		--libdir=/system/lib \
-		${CONFIG_LIBAV}
-	mv config.mak ndk/${type}
-	mv config.h ndk/${type}
-done
+		if [ "$cpu_type" = "neon" ];then
+			arch=armv7a
+			cflags=${CFLAGS_NEON}
+			config_libav=${CONFIG_LIBAV}
+			out_path=ndk/${type}
+		else
+			arch=armv5te
+			cflags=${CFLAGS_NO_NEON}
+			config_libav="${CONFIG_LIBAV} \
+				${CONFIG_LIBAV_EXTRA_NO_NEON}"
+			out_path=ndk/${type}_no_neon
+		fi
 
-for type in base_no_neon archos_no_neon full_no_neon;do
-	. ./config_${type}.sh
-
-	./configure --target-os=linux \
-		--arch=armv5te \
-		--enable-cross-compile \
-		--cc=${CROSS}gcc \
-		--cross-prefix=${CROSS} \
-		--nm=${CROSS}nm \
-		--extra-cflags="${CFLAGS_NO_NEON}" \
-		--extra-ldflags="${LDFLAGS}" \
-		--prefix=/system  \
-		--libdir=/system/lib \
-		${CONFIG_LIBAV}
-	mv config.mak ndk/${type}
-	mv config.h ndk/${type}
+		./configure --target-os=linux \
+			--arch=${arch} \
+			--enable-cross-compile \
+			--cc=${CROSS}gcc \
+			--cross-prefix=${CROSS} \
+			--nm=${CROSS}nm \
+			--extra-cflags="${cflags}" \
+			--extra-ldflags="${LDFLAGS}" \
+			--prefix=/system  \
+			--libdir=/system/lib \
+			${config_libav}
+		mv config.mak ${out_path}
+		mv config.h ${out_path}
+	done
 done
