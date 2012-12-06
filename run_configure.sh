@@ -34,7 +34,7 @@ CONFIG_LIBAV_EXTRA_NO_NEON="--disable-armv6 \
 	--disable-armvfp \
 	--disable-neon"
 
-for type in base archos full;do
+for type in base archos mpeg2 full;do
 	for cpu_type in "neon" "no_neon";do
 		out_path=
 		arch=
