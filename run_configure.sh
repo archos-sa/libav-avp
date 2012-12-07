@@ -66,6 +66,7 @@ for type in base archos mpeg2 full;do
 			--prefix=/system  \
 			--libdir=/system/lib \
 			${config_libav}
+		mv libavutil/avconfig.h ${out_path}/libavutil
 		mv config.mak ${out_path}
 		mv config.h ${out_path}
 	done
