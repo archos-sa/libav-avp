@@ -1539,7 +1539,7 @@ enum AVCodecID av_guess_codec(AVOutputFormat *fmt, const char *short_name,
  * @ingroup libavf
  * @{
  *
- * Miscelaneous utility functions related to both muxing and demuxing
+ * Miscellaneous utility functions related to both muxing and demuxing
  * (or neither).
  */
 
