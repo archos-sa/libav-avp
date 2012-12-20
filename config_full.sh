@@ -1,11 +1,14 @@
-. ./config_base.sh
-CONFIG_LIBAV="${CONFIG_LIBAV} \
-	--enable-gpl \
-	--enable-version3 \
-	--enable-decoder=dca \
-	--enable-decoder=ac3 \
-	--enable-decoder=mpeg2video \
-	--enable-decoder=mp2 \
-	--enable-demuxer=ac3 \
-	\
-	--enable-parser=dca"
+CONFIG_LIBAV="--enable-shared \
+	--disable-bzlib \
+	--disable-sse \
+	--disable-libfaac \
+	--disable-muxers \
+	--disable-bsfs \
+	--disable-avdevice \
+	--disable-devices \
+	--disable-filters \
+	--disable-encoders \
+	--enable-protocols \
+	--enable-demuxers \
+	--enable-parsers \
+	--enable-decoders"

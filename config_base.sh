@@ -44,6 +44,8 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-decoder=wmv2 \
 	--enable-decoder=wmv3 \
 	--enable-decoder=vc1 \
+	--enable-decoder=mpeg2video \
+	--enable-decoder=mp2 \
 	\
 	--enable-demuxer=avi \
 	--enable-demuxer=matroska \
@@ -59,6 +61,7 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-demuxer=mpegps \
 	--enable-demuxer=mpegvideo \
 	--enable-demuxer=wtv \
+	--enable-demuxer=ac3 \
 	\
 	--enable-protocol=file \
 	--enable-protocol=http \
@@ -74,6 +77,7 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-parser=mpegaudio \
 	--enable-parser=mpegvideo \
 	--enable-parser=flac \
+	--enable-parser=dca \
 	\
 	--disable-static \
 	--disable-mmx \
