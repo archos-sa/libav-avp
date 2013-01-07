@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "attributes.h"
-#include "../ndk/full/libavutil/avconfig.h"
+#include "libavutil/avconfig.h"
 
 #if AV_HAVE_BIGENDIAN
 #   define AV_NE(be, le) (be)

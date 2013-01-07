@@ -27,7 +27,7 @@
  *
  */
 
-#include "../ndk/full/libavutil/avconfig.h"
+#include "libavutil/avconfig.h"
 
 /**
  * Pixel format.
