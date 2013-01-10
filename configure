@@ -215,7 +215,6 @@ Advanced options (experts only):
   --extra-ldflags=ELDFLAGS add ELDFLAGS to LDFLAGS [$LDFLAGS]
   --extra-libs=ELIBS       add ELIBS [$ELIBS]
   --extra-version=STRING   version string suffix []
-  --plugin-allowed=STRING    plugin string suffix []
   --optflags               override optimization-related compiler flags
   --build-suffix=SUFFIX    library name suffix []
   --malloc-prefix=PREFIX   prefix malloc and related names with PREFIX
@@ -1204,7 +1203,6 @@ CMDLINE_SET="
     cross_prefix
     dep_cc
     extra_version
-    plugin_allowed
     host_cc
     host_cflags
     host_ldflags
@@ -3147,9 +3145,6 @@ fi
 if test "$extra_version" != ""; then
     echo "version string suffix     $extra_version"
 fi
-if test "$plugin_allowed" != ""; then
-    echo "plugin string suffix     $plugin_allowed"
-fi
 echo "big-endian                ${bigendian-no}"
 echo "runtime cpu detection     ${runtime_cpudetect-no}"
 if enabled x86; then
@@ -3293,7 +3288,6 @@ SLIBPREF=$SLIBPREF
 SLIBSUF=$SLIBSUF
 EXESUF=$EXESUF
 EXTRA_VERSION=$extra_version
-PLUGIN_ALLOWED=$plugin_allowed
 DEPFLAGS=$DEPFLAGS
 CCDEP=$CCDEP
 ASDEP=$ASDEP
