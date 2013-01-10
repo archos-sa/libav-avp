@@ -58,6 +58,7 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-demuxer=mpegtsraw \
 	--enable-demuxer=mpegps \
 	--enable-demuxer=mpegvideo \
+	--enable-demuxer=wtv \
 	\
 	--enable-protocol=file \
 	--enable-protocol=http \
