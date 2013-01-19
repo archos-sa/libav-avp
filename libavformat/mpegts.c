@@ -2111,12 +2111,20 @@ static int mpegts_read_packet(AVFormatContext *s,
     return ret;
 }
 
+static void mpegts_free(MpegTSContext *ts)
+{
+    int i;
+
+    clear_programs(ts);
+
+    for(i=0;i<NB_PID_MAX;i++)
+        if (ts->pids[i]) mpegts_close_filter(ts, ts->pids[i]);
+}
+
 static int mpegts_read_close(AVFormatContext *s)
 {
     MpegTSContext *ts = s->priv_data;
-
-    ff_mpegts_parse_close(ts);
-
+    mpegts_free(ts);
     return 0;
 }
 
@@ -2233,6 +2241,7 @@ int ff_mpegts_parse_packet(MpegTSContext *ts, AVPacket *pkt,
 
 void ff_mpegts_parse_close(MpegTSContext *ts)
 {
+<<<<<<< HEAD
     int i;
 
     clear_programs(ts);
@@ -2240,6 +2249,10 @@ void ff_mpegts_parse_close(MpegTSContext *ts)
     for(i=0;i<NB_PID_MAX;i++)
         if (ts->pids[i]) mpegts_close_filter(ts, ts->pids[i]);
 
+=======
+    mpegts_free(ts);
+    av_free(ts);
+>>>>>>> a717f99... mpegts: Share the cleanup code between the demuxer and lavf-internal parser functions
 }
 
 AVInputFormat ff_mpegts_demuxer = {
