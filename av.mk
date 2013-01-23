@@ -29,18 +29,22 @@ MMX-OBJS-yes :=
 YASM-OBJS :=
 YASM-OBJS-yes :=
 include $(LOCAL_PATH)/Makefile
+ifeq ($(TARGET_ARCH_ABI),x86)
+-include $(LOCAL_PATH)/x86/Makefile
+else
 -include $(LOCAL_PATH)/arm/Makefile
+endif
 include $(SRC_PATH)/arch.mak
 
 # collect objects
 OBJS += $(OBJS-yes)
 
-ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-FFNAME := lib$(NAME)
-AFFLIBS := $(addprefix lib,$(FFLIBS-yes) $(FFLIBS))
-else
+ifeq ($(TARGET_ARCH_ABI),armeabi)
 FFNAME := $(addsuffix _no_neon,lib$(NAME))
 AFFLIBS := $(addsuffix _no_neon,$(addprefix lib,$(FFLIBS-yes) $(FFLIBS)))
+else
+FFNAME := lib$(NAME)
+AFFLIBS := $(addprefix lib,$(FFLIBS-yes) $(FFLIBS))
 endif
 
 FFCFLAGS  = -DHAVE_AV_CONFIG_H -Wno-sign-compare -Wno-switch -Wno-pointer-sign -std=c99
