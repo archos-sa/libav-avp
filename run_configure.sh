@@ -52,6 +52,9 @@ CONFIG_LIBAV_EXTRA_ARM_NO_NEON="--disable-armv6 \
 	--disable-armvfp \
 	--disable-neon"
 
+CONFIG_LIBAV_EXTRA_X86="--disable-mmx \
+	--disable-mmx2"
+
 for type in base archos mpeg2 ac3 full;do
 	for cpu_type in "neon" "no_neon" "x86";do
 		out_path=
@@ -82,7 +85,8 @@ for type in base archos mpeg2 ac3 full;do
 			arch=x86
 			cflags=${CFLAGS_X86}
 			ldflags=${LDFLAGS_X86}
-			config_libav="${CONFIG_LIBAV}"
+			config_libav="${CONFIG_LIBAV} \
+				${CONFIG_LIBAV_EXTRA_X86}"
 			out_path=ndk/${type}_x86
 		fi
 
