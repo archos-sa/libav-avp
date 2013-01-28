@@ -36,6 +36,12 @@ else
 endif
 include $(SRC_PATH)/arch.mak
 
+ifeq ($(TARGET_ARCH_ABI),x86)
+ASM_SUFFIX := .asm
+else
+ASM_SUFFIX := .S
+endif
+
 # collect objects
 OBJS += $(OBJS-yes)
 
@@ -51,19 +57,19 @@ FFCFLAGS  = -DHAVE_AV_CONFIG_H -Wno-sign-compare -Wno-switch -Wno-pointer-sign -
 
 OBJS := $(patsubst $(SUBDIR)%,%,$(OBJS))
 
-ALL_S_FILES := $(wildcard $(LOCAL_PATH)/$(TARGET_ARCH)/*.S)
-ALL_S_FILES := $(addprefix $(TARGET_ARCH)/, $(notdir $(ALL_S_FILES)))
+ALL_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(TARGET_ARCH)/*$(ASM_SUFFIX))
+ALL_ASM_FILES := $(addprefix $(TARGET_ARCH)/, $(notdir $(ALL_ASM_FILES)))
 
-ifneq ($(ALL_S_FILES),)
-ALL_S_OBJS := $(patsubst %.S,%.o,$(ALL_S_FILES))
-C_OBJS := $(filter-out $(ALL_S_OBJS),$(OBJS))
-S_OBJS := $(filter $(ALL_S_OBJS),$(OBJS))
+ifneq ($(ALL_ASM_FILES),)
+ALL_ASM_OBJS := $(patsubst %$(ASM_SUFFIX),%.o,$(ALL_ASM_FILES))
+C_OBJS := $(filter-out $(ALL_ASM_OBJS),$(OBJS))
+ASM_OBJS := $(filter $(ALL_ASM_OBJS),$(OBJS))
 else
 C_OBJS := $(OBJS)
-S_OBJS :=
+ASM_OBJS :=
 endif
 
 C_FILES := $(patsubst %.o,%.c,$(C_OBJS))
-S_FILES := $(patsubst %.o,%.S,$(S_OBJS))
+ASM_FILES := $(patsubst %.o,%$(ASM_SUFFIX),$(ASM_OBJS))
 
-FFFILES := $(sort $(S_FILES)) $(sort $(C_FILES))
+FFFILES := $(sort $(ASM_FILES)) $(sort $(C_FILES))
