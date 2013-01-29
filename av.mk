@@ -29,10 +29,12 @@ MMX-OBJS-yes :=
 YASM-OBJS :=
 YASM-OBJS-yes :=
 include $(LOCAL_PATH)/Makefile
-ifeq ($(TARGET_ARCH_ABI),x86)
+ifeq ($(TARGET_ARCH),x86)
 -include $(LOCAL_PATH)/x86/Makefile
 else
+ifeq ($(TARGET_ARCH),arm)
 -include $(LOCAL_PATH)/arm/Makefile
+endif
 endif
 include $(SRC_PATH)/arch.mak
 
