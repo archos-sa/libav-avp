@@ -25,6 +25,9 @@ CONFIG_LIBAV="--enable-shared \
         --enable-decoder=tta \
 	--enable-decoder=vorbis \
 	\
+	--enable-decoder=amrnb \
+	--enable-decoder=amrwb \
+	\
 	--enable-decoder=msmpeg4v1 \
 	--enable-decoder=msmpeg4v2 \
 	--enable-decoder=msmpeg4v3 \
