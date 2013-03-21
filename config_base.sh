@@ -16,6 +16,7 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-decoder=cook \
 	--enable-decoder=flac \
 	--enable-decoder=aac \
+	--enable-decoder=mp2 \
 	--enable-decoder=mp3 \
 	--enable-decoder=wmav2 \
 	--enable-decoder=wmapro \
@@ -45,7 +46,6 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-decoder=wmv3 \
 	--enable-decoder=vc1 \
 	--enable-decoder=mpeg2video \
-	--enable-decoder=mp2 \
 	\
 	--enable-demuxer=avi \
 	--enable-demuxer=matroska \
