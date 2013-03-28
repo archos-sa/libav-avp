@@ -109,6 +109,10 @@ struct MpegTSContext {
     /** do not search for a PAT */
     int no_pat;
 
+    /** PIDs that must be found */
+    int vpid;
+    int apid;
+
     int64_t cur_pcr;    /**< used to estimate the exact PCR  */
     int pcr_incr;       /**< used to estimate the exact PCR  */
 
@@ -148,6 +152,10 @@ static const AVClass mpegtsraw_class = {
 static const AVOption options2[] = {
     {"no_pat", "Stream does not have a PAT, do not look for one.", offsetof(MpegTSContext, no_pat), AV_OPT_TYPE_INT,
      {.dbl = 0}, 0, 1, AV_OPT_FLAG_DECODING_PARAM },
+    {"vpid", "PID of the video stream that must be found before we can start.", offsetof(MpegTSContext, vpid), AV_OPT_TYPE_INT,
+     {.dbl = 0}, 0, INT_MAX, AV_OPT_FLAG_DECODING_PARAM },
+    {"apid", "PID of the audio stream that must be found before we can start.", offsetof(MpegTSContext, apid), AV_OPT_TYPE_INT,
+     {.dbl = 0}, 0, INT_MAX, AV_OPT_FLAG_DECODING_PARAM },
     { NULL },
 };
 
@@ -1662,8 +1670,23 @@ static int handle_packet(MpegTSContext *ts, const uint8_t *packet)
     is_start = packet[1] & 0x40;
     tss = ts->pids[pid];
     if (ts->auto_guess && tss == NULL && is_start) {
+        int got_pids = 0;
         add_pes_stream(ts, pid, -1);
         tss = ts->pids[pid];
+
+        if (ts->vpid && ts->apid) {
+            if (ts->pids[ts->vpid] && ts->pids[ts->apid]) {
+                got_pids = 1;
+            }
+        } else if (ts->vpid && ts->pids[ts->vpid]) {
+                got_pids = 1;
+        } else if (ts->apid && ts->pids[ts->apid]) {
+                got_pids = 1;
+        }
+        if (got_pids) {
+            AVFormatContext *s = ts->stream;
+            s->ctx_flags &= ~AVFMTCTX_NOHEADER;
+        }
     }
     if (!tss)
         return 0;
