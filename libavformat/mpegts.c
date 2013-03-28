@@ -106,6 +106,9 @@ struct MpegTSContext {
     /** compute exact PCR for each transport stream packet   */
     int mpeg2ts_compute_pcr;
 
+    /** do not search for a PAT */
+    int no_pat;
+
     int64_t cur_pcr;    /**< used to estimate the exact PCR  */
     int pcr_incr;       /**< used to estimate the exact PCR  */
 
@@ -139,6 +142,19 @@ static const AVClass mpegtsraw_class = {
     .class_name = "mpegtsraw demuxer",
     .item_name  = av_default_item_name,
     .option     = options,
+    .version    = LIBAVUTIL_VERSION_INT,
+};
+
+static const AVOption options2[] = {
+    {"no_pat", "Stream does not have a PAT, do not look for one.", offsetof(MpegTSContext, no_pat), AV_OPT_TYPE_INT,
+     {.dbl = 0}, 0, 1, AV_OPT_FLAG_DECODING_PARAM },
+    { NULL },
+};
+
+static const AVClass mpegts_class = {
+    .class_name = "mpegts demuxer",
+    .item_name  = av_default_item_name,
+    .option     = options2,
     .version    = LIBAVUTIL_VERSION_INT,
 };
 
@@ -1903,16 +1919,17 @@ static int mpegts_read_header(AVFormatContext *s)
 
     if (s->iformat == &ff_mpegts_demuxer) {
         /* normal demux */
+        if (!ts->no_pat) {
+            /* first do a scan to get all the services */
+            if (avio_seek(pb, pos, SEEK_SET) < 0 && pb->seekable)
+                av_log(s, AV_LOG_ERROR, "Unable to seek back to the start\n");
 
-        /* first do a scan to get all the services */
-        if (avio_seek(pb, pos, SEEK_SET) < 0 && pb->seekable)
-            av_log(s, AV_LOG_ERROR, "Unable to seek back to the start\n");
+            mpegts_open_section_filter(ts, SDT_PID, sdt_cb, ts, 1);
 
-        mpegts_open_section_filter(ts, SDT_PID, sdt_cb, ts, 1);
+            mpegts_open_section_filter(ts, PAT_PID, pat_cb, ts, 1);
 
-        mpegts_open_section_filter(ts, PAT_PID, pat_cb, ts, 1);
-
-        handle_packets(ts, s->probesize / ts->raw_packet_size);
+            handle_packets(ts, s->probesize / ts->raw_packet_size);
+        }
         /* if could not find service, enable auto_guess */
 
         ts->auto_guess = 1;
@@ -2282,6 +2299,7 @@ AVInputFormat ff_mpegts_demuxer = {
 #ifdef USE_SYNCPOINT_SEARCH
     .read_seek2     = read_seek2,
 #endif
+    .priv_class     = &mpegts_class,
 };
 
 AVInputFormat ff_mpegtsraw_demuxer = {
