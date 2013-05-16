@@ -26,7 +26,7 @@ CFLAGS_COMMON="-fPIC -DANDROID -DPIC \
 	-I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/4.6/include \
 	-I${TOOLCHAIN}/include"
 
-CFLAGS_ARM_NEON="-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -marm \
+CFLAGS_ARM_NEON="-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -marm -mvectorize-with-neon-quad\
 	-I${NDK_ROOT}/platforms/android-9/arch-arm/usr/include \
 	${CFLAGS_COMMON}"
 
