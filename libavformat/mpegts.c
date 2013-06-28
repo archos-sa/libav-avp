@@ -1654,6 +1654,28 @@ static void sdt_cb(MpegTSFilter *filter, const uint8_t *section, int section_len
     }
 }
 
+static int has_codec_parameters(AVStream *st)
+{
+    AVCodecContext *avctx = st->codec;
+    int val;
+    switch (avctx->codec_type) {
+    case AVMEDIA_TYPE_AUDIO:
+        val = avctx->sample_rate && avctx->channels;
+        if (st->info && st->info->found_decoder >= 0 && avctx->sample_fmt == AV_SAMPLE_FMT_NONE)
+            return 0;
+        break;
+    case AVMEDIA_TYPE_VIDEO:
+        val = avctx->width;
+        if (st->info && st->info->found_decoder >= 0 && avctx->pix_fmt == PIX_FMT_NONE)
+            return 0;
+        break;
+    default:
+        val = 1;
+        break;
+    }
+    return avctx->codec_id != CODEC_ID_NONE && avctx->codec_id != CODEC_ID_PROBE && val != 0;
+}
+
 /* handle one TS packet */
 static int handle_packet(MpegTSContext *ts, const uint8_t *packet)
 {
@@ -1669,24 +1691,44 @@ static int handle_packet(MpegTSContext *ts, const uint8_t *packet)
         return 0;
     is_start = packet[1] & 0x40;
     tss = ts->pids[pid];
+
+//av_log(s, AV_LOG_ERROR, "handle_packet: pid %3d  start %d\n", pid, is_start);
+
     if (ts->auto_guess && tss == NULL && is_start) {
-        int got_pids = 0;
         add_pes_stream(ts, pid, -1);
         tss = ts->pids[pid];
+    }
+    if (ts->vpid || ts->apid) {
+        int need_pids = !!ts->vpid + !!ts->apid;
+        int got_pids  = 0;
 
-        if (ts->vpid && ts->apid) {
-            if (ts->pids[ts->vpid] && ts->pids[ts->apid]) {
-                got_pids = 1;
+        if (ts->vpid && ts->pids[ts->vpid]) {
+            got_pids ++;
+        }
+        if (ts->apid && ts->pids[ts->apid]) {
+            got_pids ++;
+        }
+        if (got_pids == need_pids) {
+//av_log(s, AV_LOG_ERROR, "GOT PIDS, streams %d!\n", s->nb_streams);
+            if (got_pids == s->nb_streams) {
+//av_log(s, AV_LOG_ERROR, "GOT STREAM!\n");
+                int got_streams = 0;
+                int i;
+                for (i = 0; i < s->nb_streams; i++) {
+                    AVStream *st = s->streams[i];
+//                  AVCodecContext *avctx = st->codec;
+//av_log(NULL, AV_LOG_ERROR, "st: %d  has %d  codec %d  width %d\n", i, has_codec_parameters(st), avctx->codec_id, avctx->width );
+                    got_streams += has_codec_parameters(st);
+                }
+                if (got_streams == need_pids) {
+av_log(s, AV_LOG_ERROR, "GOT CODECS!\n");
+                    AVFormatContext *s = ts->stream;
+                    s->ctx_flags &= ~AVFMTCTX_NOHEADER;
+                    // and stop the process
+                    ts->vpid = ts->apid = 0;
+                }
             }
-        } else if (ts->vpid && ts->pids[ts->vpid]) {
-                got_pids = 1;
-        } else if (ts->apid && ts->pids[ts->apid]) {
-                got_pids = 1;
-        }
-        if (got_pids) {
-            AVFormatContext *s = ts->stream;
-            s->ctx_flags &= ~AVFMTCTX_NOHEADER;
-        }
+         }
     }
     if (!tss)
         return 0;
