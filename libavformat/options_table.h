@@ -30,7 +30,7 @@
 #define E AV_OPT_FLAG_ENCODING_PARAM
 #define D AV_OPT_FLAG_DECODING_PARAM
 
-static const AVOption options[]={
+static const AVOption avformat_options[] = {
 {"probesize", "set probing size", OFFSET(probesize), AV_OPT_TYPE_INT, {.i64 = 5000000 }, 32, INT_MAX, D},
 {"probe_extra", "extra probing parameter", OFFSET(probe_extra), AV_OPT_TYPE_INT, {.i64 = 0 }, 0, INT_MAX, D},
 {"packetsize", "set packet size", OFFSET(packet_size), AV_OPT_TYPE_INT, {.i64 = DEFAULT }, 0, INT_MAX, E},
