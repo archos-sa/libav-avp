@@ -46,6 +46,7 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-decoder=wmv3 \
 	--enable-decoder=vc1 \
 	--enable-decoder=mpeg2video \
+	--enable-decoder=theora \
 	\
 	--enable-demuxer=avi \
 	--enable-demuxer=matroska \
@@ -62,6 +63,7 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-demuxer=mpegvideo \
 	--enable-demuxer=wtv \
 	--enable-demuxer=ac3 \
+	--enable-demuxer=ogg \
 	\
 	--enable-protocol=file \
 	--enable-protocol=http \

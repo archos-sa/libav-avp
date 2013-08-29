@@ -345,7 +345,7 @@
 #undef CONFIG_DCT
 #define CONFIG_DCT 1
 #undef CONFIG_DOC
-#define CONFIG_DOC 1
+#define CONFIG_DOC 0
 #undef CONFIG_DWT
 #define CONFIG_DWT 1
 #undef CONFIG_DXVA2
