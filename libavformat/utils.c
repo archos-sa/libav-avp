@@ -2507,7 +2507,9 @@ int avformat_find_stream_info(AVFormatContext *ic, AVDictionary **options)
         }
     }
 
-    estimate_timings(ic, old_offset);
+    if (!(ic->flags & AVFMT_FLAG_NOFILLIN)) {
+        estimate_timings(ic, old_offset);
+    }
 
     compute_chapters_end(ic);
 
