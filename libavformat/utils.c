@@ -2324,8 +2324,11 @@ int avformat_find_stream_info(AVFormatContext *ic, AVDictionary **options)
                 break;
             if (st->first_dts == AV_NOPTS_VALUE &&
                 (st->codec->codec_type == AVMEDIA_TYPE_VIDEO ||
-                 st->codec->codec_type == AVMEDIA_TYPE_AUDIO))
-                break;
+                 st->codec->codec_type == AVMEDIA_TYPE_AUDIO)) {
+                if (!(ic->flags & AVFMT_FLAG_NOFILLIN)) {
+                    break;
+                }
+            }
         }
         if (i == ic->nb_streams) {
             /* NOTE: if the format has no header, then we need to read
