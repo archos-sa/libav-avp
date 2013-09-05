@@ -329,6 +329,7 @@ typedef struct AVProbeData {
     const char *filename;
     unsigned char *buf; /**< Buffer must have AVPROBE_PADDING_SIZE of extra allocated bytes filled with zero. */
     int buf_size;       /**< Size of buf except extra allocated bytes */
+    int extra;
 } AVProbeData;
 
 #define AVPROBE_SCORE_MAX 100               ///< maximum score, half of that is used for file-extension-based detection
@@ -1019,6 +1020,12 @@ typedef struct AVFormatContext {
      */
 #define RAW_PACKET_BUFFER_SIZE 2500000
     int raw_packet_buffer_remaining_size;
+
+    /**
+     * decoding: extra param passed to probe function; encoding: unused.
+     */
+    unsigned int probe_extra;
+
 } AVFormatContext;
 
 typedef struct AVPacketList {

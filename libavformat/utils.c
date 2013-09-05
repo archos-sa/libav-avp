@@ -618,6 +618,7 @@ static void probe_codec(AVFormatContext *s, AVStream *st, const AVPacket *pkt)
         AVProbeData *pd = &st->probe_data;
         av_log(s, AV_LOG_DEBUG, "probing stream %d\n", st->index);
         --st->probe_packets;
+        pd->extra = s->probe_extra;
 
         if (pkt) {
             pd->buf = av_realloc(pd->buf, pd->buf_size+pkt->size+AVPROBE_PADDING_SIZE);

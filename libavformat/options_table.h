@@ -32,6 +32,7 @@
 
 static const AVOption options[]={
 {"probesize", "set probing size", OFFSET(probesize), AV_OPT_TYPE_INT, {.dbl = 5000000 }, 32, INT_MAX, D},
+{"probe_extra", "extra probing parameter", OFFSET(probe_extra), AV_OPT_TYPE_INT, {.i64 = 0 }, 0, INT_MAX, D},
 {"packetsize", "set packet size", OFFSET(packet_size), AV_OPT_TYPE_INT, {.dbl = DEFAULT }, 0, INT_MAX, E},
 {"fflags", NULL, OFFSET(flags), AV_OPT_TYPE_FLAGS, {.dbl = DEFAULT }, INT_MIN, INT_MAX, D|E, "fflags"},
 {"ignidx", "ignore index", 0, AV_OPT_TYPE_CONST, {.dbl = AVFMT_FLAG_IGNIDX }, INT_MIN, INT_MAX, D, "fflags"},
