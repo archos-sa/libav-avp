@@ -38,6 +38,7 @@ static int mp3_read_probe(AVProbeData *p)
     uint32_t header;
     uint8_t *buf, *buf0, *buf2, *end;
     AVCodecContext avctx;
+    int need_score = p->extra ? p->extra : 500;
 
     buf0 = p->buf;
     end = p->buf + p->buf_size - sizeof(uint32_t);
@@ -84,7 +85,7 @@ static int mp3_read_probe(AVProbeData *p)
         if (pes)
             max_frames = (max_frames + pes - 1) / pes;
     }
-    if      (max_frames >  500) return AVPROBE_SCORE_MAX / 2;
+    if      (max_frames >  need_score) return AVPROBE_SCORE_MAX / 2;
     else if (max_frames >= 4)   return AVPROBE_SCORE_MAX / 4;
     else if (max_frames >= 1)   return 1;
     else                        return 0;
