@@ -1996,7 +1996,7 @@ static int try_decode_frame(AVStream *st, AVPacket *avpkt, AVDictionary **option
     }
 
 fail:
-    avcodec_free_frame(&frame);
+    av_frame_free(&frame);
     return ret;
 }
 
