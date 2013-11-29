@@ -72,7 +72,7 @@ CONFIG_LIBAV_EXTRA_ARM_NO_NEON="--disable-armv6 \
 CONFIG_LIBAV_EXTRA_X86="--disable-mmx \
 	--disable-mmx2"
 
-for type in base archos mpeg2 ac3 full;do
+for type in base archos mpeg2 ac3 full hacenter;do
 	for cpu_type in "neon" "no_neon" "x86" "mips";do
 		out_path=
 		arch=
