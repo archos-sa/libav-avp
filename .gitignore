@@ -39,6 +39,8 @@ config.log
 /doc/avoptions_codec.texi
 /doc/avoptions_format.texi
 /doc/doxy/html/
+/doc/examples/output
+/doc/examples/transcode_aac
 /doc/print_options
 /lcov/
 /libavcodec/*_tablegen
