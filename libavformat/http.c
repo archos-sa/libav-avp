@@ -904,8 +904,8 @@ static int64_t http_seek(URLContext *h, int64_t off, int whence)
 	    return AVERROR(ENOSYS);
         return s->filesize;
     }
-    if ((whence == SEEK_CUR && off == 0) ||
-        (whence == SEEK_SET && off == s->off))
+    else if ((whence == SEEK_CUR && off == 0) ||
+             (whence == SEEK_SET && off == s->off))
         return s->off;
     else if ((s->filesize == -1 && whence == SEEK_END) || h->is_streamed)
         return AVERROR(ENOSYS);
