@@ -464,7 +464,7 @@ static int get_packet_size(const uint8_t *buf, int size)
     int score, fec_score, dvhs_score;
 
     if (size < (TS_FEC_PACKET_SIZE * 5 + 1))
-        return -1;
+        return AVERROR_INVALIDDATA;
 
     score      = analyze(buf, size, TS_PACKET_SIZE, NULL);
     dvhs_score = analyze(buf, size, TS_DVHS_PACKET_SIZE, NULL);
@@ -479,7 +479,7 @@ static int get_packet_size(const uint8_t *buf, int size)
     else if (score < fec_score && dvhs_score < fec_score)
         return TS_FEC_PACKET_SIZE;
     else
-        return -1;
+        return AVERROR_INVALIDDATA;
 }
 
 typedef struct SectionHeader {
@@ -497,7 +497,7 @@ static inline int get8(const uint8_t **pp, const uint8_t *p_end)
 
     p = *pp;
     if (p >= p_end)
-        return -1;
+        return AVERROR_INVALIDDATA;
     c   = *p++;
     *pp = p;
     return c;
@@ -510,7 +510,7 @@ static inline int get16(const uint8_t **pp, const uint8_t *p_end)
 
     p = *pp;
     if ((p + 1) >= p_end)
-        return -1;
+        return AVERROR_INVALIDDATA;
     c   = AV_RB16(p);
     p  += 2;
     *pp = p;
@@ -547,24 +547,24 @@ static int parse_section_header(SectionHeader *h,
 
     val = get8(pp, p_end);
     if (val < 0)
-        return -1;
+        return val;
     h->tid = val;
     *pp += 2;
     val  = get16(pp, p_end);
     if (val < 0)
-        return -1;
+        return val;
     h->id = val;
     val = get8(pp, p_end);
     if (val < 0)
-        return -1;
+        return val;
     h->version = (val >> 1) & 0x1f;
     val = get8(pp, p_end);
     if (val < 0)
-        return -1;
+        return val;
     h->sec_num = val;
     val = get8(pp, p_end);
     if (val < 0)
-        return -1;
+        return val;
     h->last_sec_num = val;
     return 0;
 }
@@ -897,7 +897,7 @@ skip:
         case MPEGTS_PESHEADER:
             len = PES_HEADER_SIZE - pes->data_index;
             if (len < 0)
-                return -1;
+                return AVERROR_INVALIDDATA;
             if (len > buf_size)
                 len = buf_size;
             memcpy(pes->header + pes->data_index, p, len);
@@ -912,7 +912,7 @@ skip:
         case MPEGTS_PESHEADER_FILL:
             len = pes->pes_header_size - pes->data_index;
             if (len < 0)
-                return -1;
+                return AVERROR_INVALIDDATA;
             if (len > buf_size)
                 len = buf_size;
             memcpy(pes->header + pes->data_index, p, len);
@@ -1074,8 +1074,9 @@ static int parse_mp4_descr(MP4DescrParseContext *d, int64_t off, int len,
 static int parse_mp4_descr_arr(MP4DescrParseContext *d, int64_t off, int len)
 {
     while (len > 0) {
-        if (parse_mp4_descr(d, off, len, 0) < 0)
-            return -1;
+        int ret = parse_mp4_descr(d, off, len, 0);
+        if (ret < 0)
+            return ret;
         update_offsets(&d->pb, &off, &len);
     }
     return 0;
@@ -1111,7 +1112,7 @@ static int parse_MP4ESDescrTag(MP4DescrParseContext *d, int64_t off, int len)
 {
     int es_id = 0;
     if (d->descr_count >= d->max_descr_count)
-        return -1;
+        return AVERROR_INVALIDDATA;
     ff_mp4_parse_es_descr(&d->pb, &es_id);
     d->active_descr = d->descr + (d->descr_count++);
 
@@ -1130,7 +1131,7 @@ static int parse_MP4DecConfigDescrTag(MP4DescrParseContext *d, int64_t off,
 {
     Mp4Descr *descr = d->active_descr;
     if (!descr)
-        return -1;
+        return AVERROR_INVALIDDATA;
     d->active_descr->dec_config_descr = av_malloc(len);
     if (!descr->dec_config_descr)
         return AVERROR(ENOMEM);
@@ -1144,7 +1145,7 @@ static int parse_MP4SLDescrTag(MP4DescrParseContext *d, int64_t off, int len)
     Mp4Descr *descr = d->active_descr;
     int predefined;
     if (!descr)
-        return -1;
+        return AVERROR_INVALIDDATA;
 
     predefined = avio_r8(&d->pb);
     if (!predefined) {
@@ -1182,7 +1183,7 @@ static int parse_mp4_descr(MP4DescrParseContext *d, int64_t off, int len,
         av_log(d->s, AV_LOG_ERROR,
                "Tag %x length violation new length %d bytes remaining %d\n",
                tag, len1, len);
-        return -1;
+        return AVERROR_INVALIDDATA;
     }
 
     if (d->level++ >= MAX_LEVEL) {
@@ -1214,6 +1215,7 @@ static int parse_mp4_descr(MP4DescrParseContext *d, int64_t off, int len,
         break;
     }
 
+
 done:
     d->level--;
     avio_seek(&d->pb, off + len1, SEEK_SET);
@@ -1224,26 +1226,32 @@ static int mp4_read_iods(AVFormatContext *s, const uint8_t *buf, unsigned size,
                          Mp4Descr *descr, int *descr_count, int max_descr_count)
 {
     MP4DescrParseContext d;
-    if (init_MP4DescrParseContext(&d, s, buf, size, descr, max_descr_count) < 0)
-        return -1;
+    int ret;
 
-    parse_mp4_descr(&d, avio_tell(&d.pb), size, MP4IODescrTag);
+    ret = init_MP4DescrParseContext(&d, s, buf, size, descr, max_descr_count);
+    if (ret < 0)
+        return ret;
+
+    ret = parse_mp4_descr(&d, avio_tell(&d.pb), size, MP4IODescrTag);
 
     *descr_count = d.descr_count;
-    return 0;
+    return ret;
 }
 
 static int mp4_read_od(AVFormatContext *s, const uint8_t *buf, unsigned size,
                        Mp4Descr *descr, int *descr_count, int max_descr_count)
 {
     MP4DescrParseContext d;
-    if (init_MP4DescrParseContext(&d, s, buf, size, descr, max_descr_count) < 0)
-        return -1;
+    int ret;
 
-    parse_mp4_descr_arr(&d, avio_tell(&d.pb), size);
+    ret = init_MP4DescrParseContext(&d, s, buf, size, descr, max_descr_count);
+    if (ret < 0)
+        return ret;
+
+    ret = parse_mp4_descr_arr(&d, avio_tell(&d.pb), size);
 
     *descr_count = d.descr_count;
-    return 0;
+    return ret;
 }
 
 static void m4sl_cb(MpegTSFilter *filter, const uint8_t *section,
@@ -1324,13 +1332,13 @@ int ff_parse_mpeg2_descriptor(AVFormatContext *fc, AVStream *st, int stream_type
 
     desc_tag = get8(pp, desc_list_end);
     if (desc_tag < 0)
-        return -1;
+        return AVERROR_INVALIDDATA;
     desc_len = get8(pp, desc_list_end);
     if (desc_len < 0)
-        return -1;
+        return AVERROR_INVALIDDATA;
     desc_end = *pp + desc_len;
     if (desc_end > desc_list_end)
-        return -1;
+        return AVERROR_INVALIDDATA;
 
     av_dlog(fc, "tag: 0x%02x len=%d\n", desc_tag, desc_len);
 
@@ -1885,7 +1893,7 @@ static int mpegts_resync(AVFormatContext *s)
     for (i = 0; i < MAX_RESYNC_SIZE; i++) {
         c = avio_r8(pb);
         if (pb->eof_reached)
-            return -1;
+            return AVERROR_EOF;
         if (c == 0x47) {
             avio_seek(pb, -1, SEEK_CUR);
             return 0;
@@ -1894,10 +1902,10 @@ static int mpegts_resync(AVFormatContext *s)
     av_log(s, AV_LOG_ERROR,
            "max resync size reached, could not find sync byte\n");
     /* no sync found */
-    return -1;
+    return AVERROR_INVALIDDATA;
 }
 
-/* return -1 if error or EOF. Return 0 if OK. */
+/* return AVERROR_something if error or EOF. Return 0 if OK. */
 static int read_packet(AVFormatContext *s, uint8_t *buf, int raw_packet_size,
                        const uint8_t **data)
 {
@@ -1984,7 +1992,7 @@ static int mpegts_probe(AVProbeData *p)
 #define CHECK_COUNT 10
 
     if (check_count < CHECK_COUNT)
-        return -1;
+        return AVERROR_INVALIDDATA;
 
     score = analyze(p->buf, TS_PACKET_SIZE * check_count,
                     TS_PACKET_SIZE, NULL) * CHECK_COUNT / check_count;
@@ -2004,7 +2012,7 @@ static int mpegts_probe(AVProbeData *p)
     else if (fec_score > 6)
         return AVPROBE_SCORE_MAX + fec_score - CHECK_COUNT;
     else
-        return -1;
+        return AVERROR_INVALIDDATA;
 }
 
 /* return the 90kHz PCR and the extension for the 27MHz PCR. return
@@ -2017,18 +2025,18 @@ static int parse_pcr(int64_t *ppcr_high, int *ppcr_low, const uint8_t *packet)
 
     afc = (packet[3] >> 4) & 3;
     if (afc <= 1)
-        return -1;
+        return AVERROR_INVALIDDATA;
     p   = packet + 4;
     len = p[0];
     p++;
     if (len == 0)
-        return -1;
+        return AVERROR_INVALIDDATA;
     flags = *p++;
     len--;
     if (!(flags & 0x10))
-        return -1;
+        return AVERROR_INVALIDDATA;
     if (len < 6)
-        return -1;
+        return AVERROR_INVALIDDATA;
     v          = AV_RB32(p);
     *ppcr_high = ((int64_t) v << 1) | (p[4] >> 7);
     *ppcr_low  = ((p[4] & 1) << 8) | p[5];
@@ -2046,11 +2054,13 @@ static int mpegts_read_header(AVFormatContext *s)
     /* read the first 1024 bytes to get packet size */
     pos = avio_tell(pb);
     len = avio_read(pb, buf, sizeof(buf));
+    if (len < 0)
+        return len;
     if (len != sizeof(buf))
-        goto fail;
+        return AVERROR_BUG;
     ts->raw_packet_size = get_packet_size(buf, sizeof(buf));
     if (ts->raw_packet_size <= 0)
-        goto fail;
+        return AVERROR_INVALIDDATA;
     ts->stream     = s;
     ts->auto_guess = 0;
 
@@ -2086,7 +2096,7 @@ static int mpegts_read_header(AVFormatContext *s)
 
         st = avformat_new_stream(s, NULL);
         if (!st)
-            goto fail;
+            return AVERROR(ENOMEM);
         avpriv_set_pts_info(st, 60, 1, 27000000);
         st->codec->codec_type = AVMEDIA_TYPE_DATA;
         st->codec->codec_id   = AV_CODEC_ID_MPEG2TS;
@@ -2098,7 +2108,7 @@ static int mpegts_read_header(AVFormatContext *s)
         for (;;) {
             ret = read_packet(s, packet, ts->raw_packet_size, &data);
             if (ret < 0)
-                return -1;
+                return ret;
             pid = AV_RB16(data + 1) & 0x1fff;
             if ((pcr_pid == -1 || pcr_pid == pid) &&
                 parse_pcr(&pcr_h, &pcr_l, data) == 0) {
@@ -2128,8 +2138,6 @@ static int mpegts_read_header(AVFormatContext *s)
 
     avio_seek(pb, pos, SEEK_SET);
     return 0;
-fail:
-    return -1;
 }
 
 #define MAX_PACKET_READAHEAD ((128 * 1024) / 188)
@@ -2274,16 +2282,21 @@ static int read_seek(AVFormatContext *s, int stream_index, int64_t target_ts, in
     MpegTSContext *ts = s->priv_data;
     uint8_t buf[TS_PACKET_SIZE];
     int64_t pos;
+    int ret;
 
-    if (ff_seek_frame_binary(s, stream_index, target_ts, flags) < 0)
-        return -1;
+    ret = ff_seek_frame_binary(s, stream_index, target_ts, flags);
+    if (ret < 0)
+        return ret;
 
     pos = avio_tell(s->pb);
 
     for (;;) {
         avio_seek(s->pb, pos, SEEK_SET);
-        if (avio_read(s->pb, buf, TS_PACKET_SIZE) != TS_PACKET_SIZE)
-            return -1;
+        ret = avio_read(s->pb, buf, TS_PACKET_SIZE);
+        if (ret < 0)
+            return ret;
+        if (ret != TS_PACKET_SIZE)
+            return AVERROR_EOF;
         // pid = AV_RB16(buf + 1) & 0x1fff;
         if (buf[1] & 0x40)
             break;
@@ -2330,7 +2343,7 @@ int ff_mpegts_parse_packet(MpegTSContext *ts, AVPacket *pkt,
         if (ts->stop_parse > 0)
             break;
         if (len < TS_PACKET_SIZE)
-            return -1;
+            return AVERROR_INVALIDDATA;
         if (buf[0] != 0x47) {
             buf++;
             len--;
