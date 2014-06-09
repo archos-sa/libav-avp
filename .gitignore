@@ -31,7 +31,6 @@ config.log
 /avconv
 /avplay
 /avprobe
-/avserver
 /config.*
 /coverage.info
 /version.h
