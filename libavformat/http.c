@@ -610,10 +610,13 @@ static int64_t http_seek(URLContext *h, int64_t off, int whence)
     uint8_t old_buf[BUFFER_SIZE];
     int old_buf_size;
 
-    if (whence == AVSEEK_SIZE)
+    if (whence == AVSEEK_SIZE) {
+        if (s->filesize == -1)
+	    return AVERROR(ENOSYS);
         return s->filesize;
-    else if ((whence == SEEK_CUR && off == 0) ||
-             (whence == SEEK_SET && off == s->off))
+    }
+    if ((whence == SEEK_CUR && off == 0) ||
+        (whence == SEEK_SET && off == s->off))
         return s->off;
     else if ((s->filesize == -1 && whence == SEEK_END) || h->is_streamed)
         return -1;
@@ -628,6 +631,14 @@ static int64_t http_seek(URLContext *h, int64_t off, int whence)
         off += s->filesize;
     s->off = off;
 
+    if (s->filesize > 0) {
+        /* seeking to the actual filesize is valid, 
+         * the next read will fail and set EOF */
+        if (off == s->filesize)
+            return off;
+        if (off > s->filesize)
+            return AVERROR(EINVAL);
+    }
     /* if it fails, continue on old connection */
     if (http_open_cnx(h) < 0) {
         memcpy(s->buffer, old_buf, old_buf_size);
