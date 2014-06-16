@@ -8,6 +8,7 @@ obj
 *.d
 *.def
 *.dll
+*.dylib
 *.exe
 *.exp
 *.gcda
@@ -19,6 +20,7 @@ obj
 *.pdb
 *.so
 *.so.*
+*.swp
 *.ver
 *-example
 *-test
