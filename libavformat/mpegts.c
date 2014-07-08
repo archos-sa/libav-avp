@@ -311,7 +311,7 @@ static int discard_pid(MpegTSContext *ts, unsigned int pid)
  *  Assemble PES packets out of TS packets, and then call the "section_cb"
  *  function when they are complete.
  */
-static void write_section_data(AVFormatContext *s, MpegTSFilter *tss1,
+static void write_section_data(MpegTSContext *ts, MpegTSFilter *tss1,
                                const uint8_t *buf, int buf_size, int is_start)
 {
     MpegTSSectionFilter *tss = &tss1->u.section_filter;
@@ -1750,7 +1750,6 @@ static int has_codec_parameters(AVStream *st)
 /* handle one TS packet */
 static int handle_packet(MpegTSContext *ts, const uint8_t *packet)
 {
-    AVFormatContext *s = ts->stream;
     MpegTSFilter *tss;
     int len, pid, cc, expected_cc, cc_ok, afc, is_start, is_discontinuity,
         has_adaptation, has_payload;
@@ -1855,7 +1854,7 @@ av_log(s, AV_LOG_ERROR, "GOT CODECS!\n");
                 return 0;
             if (len && cc_ok) {
                 /* write remaining section bytes */
-                write_section_data(s, tss,
+                write_section_data(ts, tss,
                                    p, len, 0);
                 /* check whether filter has been closed */
                 if (!ts->pids[pid])
@@ -1863,12 +1862,12 @@ av_log(s, AV_LOG_ERROR, "GOT CODECS!\n");
             }
             p += len;
             if (p < p_end) {
-                write_section_data(s, tss,
+                write_section_data(ts, tss,
                                    p, p_end - p, 1);
             }
         } else {
             if (cc_ok) {
-                write_section_data(s, tss,
+                write_section_data(ts, tss,
                                    p, p_end - p, 0);
             }
         }
