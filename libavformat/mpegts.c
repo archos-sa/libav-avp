@@ -1764,7 +1764,7 @@ static int handle_packet(MpegTSContext *ts, const uint8_t *packet)
 
 //av_log(s, AV_LOG_ERROR, "handle_packet: pid %3d  start %d\n", pid, is_start);
 
-    if (ts->auto_guess && tss == NULL && is_start) {
+    if (ts->auto_guess && !tss && is_start) {
         add_pes_stream(ts, pid, -1);
         tss = ts->pids[pid];
     }
