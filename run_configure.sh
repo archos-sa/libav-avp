@@ -1,118 +1,139 @@
-#!/bin/sh
+#!/bin/bash
 
 NDK_ROOT=../../android-ndk
 
+HOST=linux-x86_64
+GCC_V=4.9
+ANDROID_PLATFORM=android-L
+
 TOOLCHAIN_PATH=${NDK_ROOT}/toolchains
 
-TOOLCHAIN_ARM=${TOOLCHAIN_PATH}/arm-linux-androideabi-4.6/prebuilt/linux-x86
-CROSS_ARM=${TOOLCHAIN_ARM}/bin/arm-linux-androideabi-
-CRT_PATH_ARM=${TOOLCHAIN_ARM}/lib/gcc/arm-linux-androideabi/4.6.x-google/armv7-a
-SYSTEM_LIB_ARM=${NDK_ROOT}/platforms/android-9/arch-arm/usr/lib
-LDSCRIPTS_ARM=${TOOLCHAIN_ARM}/arm-linux-androideabi/lib/ldscripts/armelf_linux_eabi.x
+GCCNAME_arm=arm-linux-androideabi
+TLNAME_arm=arm-linux-androideabi
+LIB_arm=lib
 
-TOOLCHAIN_X86=${TOOLCHAIN_PATH}/x86-4.6/prebuilt/linux-x86
-CROSS_X86=${TOOLCHAIN_X86}/bin/i686-linux-android-
-CRT_PATH_X86=${TOOLCHAIN_X86}/lib/gcc/i686-linux-android/4.6.x-google
-SYSTEM_LIB_X86=${NDK_ROOT}/platforms/android-9/arch-x86/usr/lib
-LDSCRIPTS_X86=${TOOLCHAIN_X86}/i686-linux-android/lib/ldscripts/elf_i386.x
+GCCNAME_x86=i686-linux-android
+TLNAME_x86=x86
+LIB_x86=lib
 
-TOOLCHAIN_MIPS=${TOOLCHAIN_PATH}/mipsel-linux-android-4.6/prebuilt/linux-x86
-CROSS_MIPS=${TOOLCHAIN_MIPS}/bin/mipsel-linux-android-
-CRT_PATH_MIPS=${TOOLCHAIN_MIPS}/lib/gcc/mipsel-linux-android/4.6.x-google
-SYSTEM_LIB_MIPS=${NDK_ROOT}/platforms/android-9/arch-mips/usr/lib
-LDSCRIPTS_MIPS=${TOOLCHAIN_MIPS}/mipsel-linux-android/lib/ldscripts/elf32btsmip.x
+GCCNAME_mips=mipsel-linux-android
+TLNAME_mips=mipsel-linux-android
+LIB_mips=lib
 
-CFLAGS_COMMON="-fPIC -DANDROID -DPIC \
-	-I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/4.6/include \
-	-I${TOOLCHAIN}/include"
+GCCNAME_arm64=aarch64-linux-android
+TLNAME_arm64=aarch64-linux-android
+lib_arm64=lib
 
-CFLAGS_ARM_NEON="-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -marm -mvectorize-with-neon-quad\
-	-I${NDK_ROOT}/platforms/android-9/arch-arm/usr/include \
-	${CFLAGS_COMMON}"
+GCCNAME_x86_64=x86_64-linux-android
+TLNAME_x86_64=x86_64
+LIB_x86_64=lib64
 
-CFLAGS_ARM_NO_NEON="-march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -marm \
-	-I${NDK_ROOT}/platforms/android-9/arch-arm/usr/include \
-	${CFLAGS_COMMON}"
+GCCNAME_mips64=mips64el-linux-android
+TLNAME_mips64=mips64el-linux-android
+LIB_mips64=lib64
 
-CFLAGS_X86="-I${NDK_ROOT}/platforms/android-9/arch-x86/usr/include \
-	${CFLAGS_COMMON}"
+function tlname ()
+{
+	eval echo $\TLNAME_$1
+}
 
-CFLAGS_MIPS="-I${NDK_ROOT}/platforms/android-9/arch-mips/usr/include \
-	${CFLAGS_COMMON}"
+function gccname ()
+{
+	eval echo $\GCCNAME_$1
+}
 
-LDFLAGS_ARM="-Wl,-T,${LDSCRIPTS_ARM} \
-	-Wl,-rpath-link=${SYSTEM_LIB_ARM} \
-	-L${SYSTEM_LIB_ARM} \
-	-nostdlib \
-	${CRT_PATH_ARM}/crtbegin.o \
-	${CRT_PATH_ARM}/crtend.o \
-	-lc -lm -ldl"
+function lib ()
+{
+	eval echo $\LIB_$1
+}
 
-LDFLAGS_X86="-Wl,-T,${LDSCRIPTS_X86} \
-	-Wl,-rpath-link=${SYSTEM_LIB_X86} \
-	-L${SYSTEM_LIB_X86} \
-	-nostdlib \
-	${CRT_PATH_X86}/crtbegin.o \
-	${CRT_PATH_X86}/crtend.o \
-	-lc -lm -ldl"
+function tlpath ()
+{
+	echo ${TOOLCHAIN_PATH}/`tlname $1`-${GCC_V}/prebuilt/${HOST}
+}
 
-LDFLAGS_MIPS="-Wl,-T,${LDSCRIPTS_MIPS} \
-	-Wl,-rpath-link=${SYSTEM_LIB_MIPS} \
-	-L${SYSTEM_LIB_MIPS} \
-	-nostdlib \
-	${CRT_PATH_MIPS}/crtbegin.o \
-	${CRT_PATH_MIPS}/crtend.o \
-	-lc -lm -ldl"
+function cross ()
+{
+	echo `tlpath $1`/bin/`gccname $1`-
+}
 
-CONFIG_LIBAV_EXTRA_ARM_NO_NEON="--disable-armv6 \
-	--disable-armv6t2 \
-	--disable-armvfp \
-	--disable-neon"
+function cflags ()
+{
+	ext_cflags=
+	if [ "$1" = "arm" ];then
+		if [ "$2" = "neon" ];then
+			ext_cflags="-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -marm -mvectorize-with-neon-quad"
+		else
+			ext_cflags="-march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -marm"
+		fi
+	fi
+	echo "$ext_cflags" \
+		"-I${NDK_ROOT}/platforms/${ANDROID_PLATFORM}/arch-${1}/usr/include" \
+		"-fPIC -DANDROID -DPIC" \
+		"-I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${GCC_V}/include"
+}
 
-CONFIG_LIBAV_EXTRA_X86="--disable-mmx \
-	--disable-mmx2"
+function ldflags ()
+{
+	rpathlink="${NDK_ROOT}/platforms/${ANDROID_PLATFORM}/arch-$1/usr/`lib $1`"
+	ext_crtpath=
+	if [ "$1" = "arm" ];then
+		if [ "$2" = "neon" ];then
+			ext_crtpath="/armv7-a"
+		fi
+	fi
+	crtpath="`tlpath $1`/lib/gcc/`gccname $1`/${GCC_V}${ext_crtpath}"
+	echo "-L${rpathlink}" \
+		"${crtpath}/crtbegin.o" \
+		"${crtpath}/crtend.o" \
+		"-nostdlib" \
+		"-lc -lm -ldl"
+}
+
+function config_libav ()
+{
+	ext_config=
+	if [ "$1" = "arm" ];then
+		if [ "$2" != "neon" ];then
+			ext_config="--disable-armv6 --disable-armv6t2 --disable-armvfp --disable-neon"
+		fi
+	elif [ "$1" = "x86" ];then
+		ext_config="--disable-mmx"
+	fi
+	echo ${ext_config} ${CONFIG_LIBAV}
+}
 
 for type in base archos mpeg2 ac3 full hacenter;do
-	for cpu_type in "neon" "no_neon" "x86" "mips";do
+	for cpu_type in "neon" "no_neon" "x86" "mips" "x86_64";do #TODO: add arm64, mips64
 		out_path=
 		arch=
 		cflags=
 		config_libav=
 		ldflags=
 		cross=
+		arg1=
+		arg2=
+
 		. ./config_${type}.sh
 
 		if [ "$cpu_type" = "neon" ];then
-			cross=${CROSS_ARM}
+			arg1="arm"
+			arg2="neon"
 			arch=armv7a
-			cflags=${CFLAGS_ARM_NEON}
-			ldflags=${LDFLAGS_ARM}
-			config_libav=${CONFIG_LIBAV}
 			out_path=ndk/${type}
 		elif [ "$cpu_type" = "no_neon" ];then
-			cross=${CROSS_ARM}
+			arg1="arm"
 			arch=armv5te
-			cflags=${CFLAGS_ARM_NO_NEON}
-			ldflags=${LDFLAGS_ARM}
-			config_libav="${CONFIG_LIBAV} \
-				${CONFIG_LIBAV_EXTRA_ARM_NO_NEON}"
 			out_path=ndk/${type}_no_neon
-		elif [ "$cpu_type" = "x86" ];then
-			cross=${CROSS_X86}
-			arch=x86
-			cflags=${CFLAGS_X86}
-			ldflags=${LDFLAGS_X86}
-			config_libav="${CONFIG_LIBAV} \
-				${CONFIG_LIBAV_EXTRA_X86}"
-			out_path=ndk/${type}_x86
 		else
-			cross=${CROSS_MIPS}
-			arch=mips
-			cflags=${CFLAGS_MIPS}
-			ldflags=${LDFLAGS_MIPS}
-			config_libav="${CONFIG_LIBAV}"
-			out_path=ndk/${type}_mips
+			arg1="$cpu_type"
+			arch="$cpu_type"
+			out_path=ndk/${type}_$cpu_type
 		fi
+		cross=`cross $arg1 $arg2`
+		cflags=`cflags $arg1 $arg2`
+		ldflags=`ldflags $arg1 $arg2`
+		config_libav=`config_libav $arg1 $arg2`
 
 		./configure --target-os=linux \
 			--arch=${arch} \
@@ -120,6 +141,7 @@ for type in base archos mpeg2 ac3 full hacenter;do
 			--cc=${cross}gcc \
 			--cross-prefix=${cross} \
 			--nm=${cross}nm \
+			--ld=${cross}ld \
 			--extra-cflags="${cflags}" \
 			--extra-ldflags="${ldflags}" \
 			--prefix=/system  \
