@@ -4,33 +4,38 @@ NDK_ROOT=../../android-ndk
 
 HOST=linux-x86_64
 GCC_V=4.9
-ANDROID_PLATFORM=android-L
 
 TOOLCHAIN_PATH=${NDK_ROOT}/toolchains
 
 GCCNAME_arm=arm-linux-androideabi
 TLNAME_arm=arm-linux-androideabi
 LIB_arm=lib
+PLATFORM_arm=android-14
 
 GCCNAME_x86=i686-linux-android
 TLNAME_x86=x86
 LIB_x86=lib
+PLATFORM_x86=android-14
 
 GCCNAME_mips=mipsel-linux-android
 TLNAME_mips=mipsel-linux-android
 LIB_mips=lib
+PLATFORM_mips=android-14
 
 GCCNAME_arm64=aarch64-linux-android
 TLNAME_arm64=aarch64-linux-android
 lib_arm64=lib
+PLATFORM_arm64=android-L
 
 GCCNAME_x86_64=x86_64-linux-android
 TLNAME_x86_64=x86_64
 LIB_x86_64=lib64
+PLATFORM_x86_64=android-L
 
 GCCNAME_mips64=mips64el-linux-android
 TLNAME_mips64=mips64el-linux-android
 LIB_mips64=lib64
+PLATFORM_mips64=android-L
 
 function tlname ()
 {
@@ -45,6 +50,11 @@ function gccname ()
 function lib ()
 {
 	eval echo $\LIB_$1
+}
+
+function platform ()
+{
+	eval echo $\PLATFORM_$1
 }
 
 function tlpath ()
@@ -68,14 +78,14 @@ function cflags ()
 		fi
 	fi
 	echo "$ext_cflags" \
-		"-I${NDK_ROOT}/platforms/${ANDROID_PLATFORM}/arch-${1}/usr/include" \
+		"-I${NDK_ROOT}/platforms/`platform $1`/arch-${1}/usr/include" \
 		"-fPIC -DANDROID -DPIC" \
 		"-I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${GCC_V}/include"
 }
 
 function ldflags ()
 {
-	rpathlink="${NDK_ROOT}/platforms/${ANDROID_PLATFORM}/arch-$1/usr/`lib $1`"
+	rpathlink="${NDK_ROOT}/platforms/`platform $1`/arch-$1/usr/`lib $1`"
 	ext_crtpath=
 	if [ "$1" = "arm" ];then
 		if [ "$2" = "neon" ];then
