@@ -105,7 +105,7 @@ function config_libav ()
 	ext_config=
 	if [ "$1" = "arm" ];then
 		if [ "$2" != "neon" ];then
-			ext_config="--disable-armv6 --disable-armv6t2 --disable-armvfp --disable-neon"
+			ext_config="--disable-armv6 --disable-armv6t2 --disable-neon"
 		fi
 	elif [ "$1" = "x86" ];then
 		ext_config="--disable-mmx"
