@@ -24,7 +24,7 @@ PLATFORM_mips=android-14
 
 GCCNAME_arm64=aarch64-linux-android
 TLNAME_arm64=aarch64-linux-android
-lib_arm64=lib
+LIB_arm64=lib
 PLATFORM_arm64=android-L
 
 GCCNAME_x86_64=x86_64-linux-android
