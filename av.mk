@@ -42,7 +42,7 @@ include $(LOCAL_PATH)/Makefile
 -include $(LOCAL_PATH)/$(INTRINSICS)/Makefile
 include $(SRC_PATH)/arch.mak
 
-ifeq ($(TARGET_ARCH_ABI),x86)
+ifneq ($(filter $(TARGET_ARCH), x86 x86_64),)
 ASM_SUFFIX := .asm
 else
 ASM_SUFFIX := .S
