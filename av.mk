@@ -60,7 +60,7 @@ FFNAME := lib$(NAME)
 AFFLIBS := $(addprefix lib,$(FFLIBS-yes) $(FFLIBS))
 endif
 
-FFCFLAGS  = -DHAVE_AV_CONFIG_H -Wno-sign-compare -Wno-switch -Wno-pointer-sign -std=c99
+FFCFLAGS  = -DHAVE_AV_CONFIG_H -Wno-sign-compare -Wno-switch -Wno-pointer-sign -std=c99 -DPIC
 
 OBJS := $(patsubst $(SUBDIR)%,%,$(OBJS))
 
