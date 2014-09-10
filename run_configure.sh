@@ -114,7 +114,7 @@ function config_libav ()
 }
 
 for type in base archos mpeg2 ac3 full hacenter;do
-	for cpu_type in "neon" "no_neon" "x86" "mips" "x86_64";do #TODO: add arm64, mips64
+	for cpu_type in "neon" "no_neon" "x86" "mips" "arm64" "x86_64";do
 		out_path=
 		arch=
 		cflags=
