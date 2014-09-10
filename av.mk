@@ -64,8 +64,8 @@ FFCFLAGS  = -DHAVE_AV_CONFIG_H -Wno-sign-compare -Wno-switch -Wno-pointer-sign -
 
 OBJS := $(patsubst $(SUBDIR)%,%,$(OBJS))
 
-ALL_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(TARGET_ARCH)/*$(ASM_SUFFIX))
-ALL_ASM_FILES := $(addprefix $(TARGET_ARCH)/, $(notdir $(ALL_ASM_FILES)))
+ALL_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(ARCH)/*$(ASM_SUFFIX))
+ALL_ASM_FILES := $(addprefix $(ARCH)/, $(notdir $(ALL_ASM_FILES)))
 
 ifneq ($(ALL_ASM_FILES),)
 ALL_ASM_OBJS := $(patsubst %$(ASM_SUFFIX),%.o,$(ALL_ASM_FILES))
