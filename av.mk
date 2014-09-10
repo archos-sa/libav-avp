@@ -10,12 +10,16 @@ FFLIBS :=
 FFLIBS-yes :=
 OBJS :=
 OBJS-yes :=
+ALTIVEC-OBJS :=
+ALTIVEC-OBJS-yes :=
 ARMV5TE-OBJS :=
 ARMV5TE-OBJS-yes :=
 ARMV6-OBJS :=
 ARMV6-OBJS-yes :=
-ARMVFP-OBJS :=
-ARMVFP-OBJS-yes :=
+ARMV8-OBJS :=
+ARMV8-OBJS-yes :=
+VFP-OBJS :=
+VFP-OBJS-yes :=
 NEON-OBJS :=
 NEON-OBJS-yes :=
 MMI-OBJS :=
@@ -28,14 +32,14 @@ MMX-OBJS :=
 MMX-OBJS-yes :=
 YASM-OBJS :=
 YASM-OBJS-yes :=
+FFT-OBJS :=
+FFT-OBJS-yes :=
+RDFT-OBJS :=
+RDFT-OBJS-yes :=
+
 include $(LOCAL_PATH)/Makefile
-ifeq ($(TARGET_ARCH),x86)
--include $(LOCAL_PATH)/x86/Makefile
-else
-ifeq ($(TARGET_ARCH),arm)
--include $(LOCAL_PATH)/arm/Makefile
-endif
-endif
+-include $(LOCAL_PATH)/$(ARCH)/Makefile
+-include $(LOCAL_PATH)/$(INTRINSICS)/Makefile
 include $(SRC_PATH)/arch.mak
 
 ifeq ($(TARGET_ARCH_ABI),x86)
@@ -46,6 +50,7 @@ endif
 
 # collect objects
 OBJS += $(OBJS-yes)
+FFLIBS := $($(NAME)_FFLIBS) $(FFLIBS-yes) $(FFLIBS)
 
 ifeq ($(TARGET_ARCH_ABI),armeabi)
 FFNAME := $(addsuffix _no_neon,lib$(NAME))

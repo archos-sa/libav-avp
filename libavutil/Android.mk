@@ -6,7 +6,7 @@ include $(LOCAL_PATH)/../av.mk
 LOCAL_SRC_FILES := $(FFFILES)
 
 LOCAL_C_INCLUDES :=		\
-	$(LOCAL_PATH)		\
+	$(NDK_ROOT)/platforms/$(TARGET_PLATFORM)/arch-$(TARGET_ARCH)/usr/include \
 	$(LOCAL_PATH)/..	\
 	$(LOCAL_PATH)/../ndk/$(LIBAV_CONFIG_TYPE)
 
