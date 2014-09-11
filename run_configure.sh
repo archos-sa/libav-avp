@@ -107,8 +107,8 @@ function config_libav ()
 		if [ "$2" != "neon" ];then
 			ext_config="--disable-armv6 --disable-armv6t2 --disable-neon"
 		fi
-	elif [ "$1" = "x86" ];then
-		ext_config="--disable-mmx"
+	elif [ "$1" = "x86" -o "$1" = "x86_64" ];then
+		ext_config="--disable-yasm"
 	fi
 	echo ${ext_config} ${CONFIG_LIBAV}
 }
