@@ -11,4 +11,5 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-protocols \
 	--enable-demuxers \
 	--enable-parsers \
-	--enable-decoders"
+	--enable-decoders \
+	--disable-decoder=opus"
