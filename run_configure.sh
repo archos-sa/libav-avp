@@ -145,6 +145,10 @@ for type in base archos mpeg2 ac3 full hacenter;do
 		ldflags=`ldflags $arg1 $arg2`
 		config_libav=`config_libav $arg1 $arg2`
 
+		echo ---------------------------------------
+		echo running configure for $type / $cpu_type
+		echo ---------------------------------------
+
 		./configure --target-os=linux \
 			--arch=${arch} \
 			--enable-cross-compile \
