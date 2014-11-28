@@ -25,17 +25,17 @@ PLATFORM_mips=android-14
 GCCNAME_arm64=aarch64-linux-android
 TLNAME_arm64=aarch64-linux-android
 LIB_arm64=lib
-PLATFORM_arm64=android-L
+PLATFORM_arm64=android-21
 
 GCCNAME_x86_64=x86_64-linux-android
 TLNAME_x86_64=x86_64
 LIB_x86_64=lib64
-PLATFORM_x86_64=android-L
+PLATFORM_x86_64=android-21
 
 GCCNAME_mips64=mips64el-linux-android
 TLNAME_mips64=mips64el-linux-android
 LIB_mips64=lib64
-PLATFORM_mips64=android-L
+PLATFORM_mips64=android-21
 
 function tlname ()
 {
