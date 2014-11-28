@@ -4,7 +4,7 @@
 #define LIBAV_CONFIGURATION "--target-os=linux --arch=x86 --enable-cross-compile --cc=../../android-ndk/toolchains/x86-4.9/prebuilt/linux-x86_64/bin/i686-linux-android-gcc --cross-prefix=../../android-ndk/toolchains/x86-4.9/prebuilt/linux-x86_64/bin/i686-linux-android- --nm=../../android-ndk/toolchains/x86-4.9/prebuilt/linux-x86_64/bin/i686-linux-android-nm --ld=../../android-ndk/toolchains/x86-4.9/prebuilt/linux-x86_64/bin/i686-linux-android-ld --extra-cflags=' -I../../android-ndk/platforms/android-14/arch-x86/usr/include -fPIC -DANDROID -DPIC -I../../android-ndk/sources/cxx-stl/gnu-libstdc++/4.9/include' --extra-ldflags='-L../../android-ndk/platforms/android-14/arch-x86/usr/lib ../../android-ndk/toolchains/x86-4.9/prebuilt/linux-x86_64/lib/gcc/i686-linux-android/4.9/crtbegin.o ../../android-ndk/toolchains/x86-4.9/prebuilt/linux-x86_64/lib/gcc/i686-linux-android/4.9/crtend.o -nostdlib -lc -lm -ldl' --prefix=/system --libdir=/system/lib --disable-yasm --enable-shared --disable-bzlib --disable-sse --disable-libfaac --disable-muxers --disable-bsfs --disable-avdevice --disable-devices --disable-filters --disable-encoders --disable-protocols --disable-demuxers --disable-parsers --disable-decoders --enable-protocol=file --enable-muxer=m4v --enable-muxer=mp4 --enable-encoder=mpeg4 --enable-encoder=aac"
 #define LIBAV_LICENSE "LGPL version 2.1 or later"
 #define AVCONV_DATADIR "/system/share/avconv"
-#define CC_IDENT "gcc 4.9 (GCC) 20140514 (prerelease)"
+#define CC_IDENT "gcc 4.9 (GCC) 20140827 (prerelease)"
 #define restrict restrict
 #define EXTERN_PREFIX ""
 #define EXTERN_ASM 
