@@ -77,10 +77,12 @@ function cflags ()
 			ext_cflags="-march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -marm"
 		fi
 	fi
+	if [ "$1" = "x86" ];then
+		ext_cflags="-O3 -fasm -march=atom -ffast-math -msse3 -mfpmath=sse"
+	fi
 	echo "$ext_cflags" \
 		"-I${NDK_ROOT}/platforms/`platform $1`/arch-${1}/usr/include" \
-		"-fPIC -DANDROID -DPIC" \
-		"-I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${GCC_V}/include"
+		"-fPIC -DANDROID -DPIC"
 }
 
 function ldflags ()
@@ -108,7 +110,7 @@ function config_libav ()
 			ext_config="--disable-armv6 --disable-armv6t2 --disable-neon"
 		fi
 	elif [ "$1" = "x86" -o "$1" = "x86_64" ];then
-		ext_config="--disable-yasm"
+		ext_config="--cpu=atom --enable-asm --enable-yasm --enable-sse2 --enable-sse3 --enable-ssse3"
 	fi
 	echo ${ext_config} ${CONFIG_LIBAV}
 }
@@ -165,5 +167,8 @@ for type in base archos mpeg2 ac3 full hacenter;do
 		mv libavutil/avconfig.h ${out_path}/libavutil/
 		mv config.mak ${out_path}
 		mv config.h ${out_path}
+		if [ "$cpu_type" = "x86" -o "$cpu_type" = "x86_64" ];then
+			mv config.asm ${out_path}
+		fi
 	done
 done

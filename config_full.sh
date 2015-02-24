@@ -1,6 +1,5 @@
 CONFIG_LIBAV="--enable-shared \
 	--disable-bzlib \
-	--disable-sse \
 	--disable-libfaac \
 	--disable-muxers \
 	--disable-bsfs \

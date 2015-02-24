@@ -1,6 +1,5 @@
 CONFIG_LIBAV="--enable-shared \
 	--disable-bzlib \
-	--disable-sse \
 	--disable-libfaac \
 	--disable-muxers \
 	--disable-demuxers \
@@ -88,6 +87,5 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-parser=dca \
 	\
 	--disable-static \
-	--disable-mmx \
 	--disable-symver \
 	--enable-memalign-hack"
