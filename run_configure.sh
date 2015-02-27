@@ -110,7 +110,10 @@ function config_libav ()
 			ext_config="--disable-armv6 --disable-armv6t2 --disable-neon"
 		fi
 	elif [ "$1" = "x86" -o "$1" = "x86_64" ];then
-		ext_config="--cpu=atom --enable-asm --enable-yasm --enable-sse2 --enable-sse3 --enable-ssse3"
+		ext_config=" --enable-asm --enable-yasm --enable-pic"
+	fi
+	if [ "$1" = "x86" ];then
+		ext_config+=" --cpu=i686"
 	fi
 	echo ${ext_config} ${CONFIG_LIBAV}
 }

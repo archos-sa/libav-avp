@@ -10,11 +10,11 @@ LOCAL_C_INCLUDES :=		\
 	$(LOCAL_PATH)/..	\
 	$(LOCAL_PATH)/../ndk/$(LIBAV_CONFIG_TYPE)
 
-LOCAL_CFLAGS = $(FFCFLAGS)
+LOCAL_CFLAGS += $(FFCFLAGS)
 #LOCAL_CFLAGS += -include "string.h" -Dipv6mr_interface=ipv6mr_ifindex
 
 ifeq ($(TARGET_ARCH_ABI),x86)
-LOCAL_CFLAGS += -fasm -march=atom -ffast-math -msse3 -mfpmath=sse -O3
+LOCAL_CFLAGS += -DPIC -march=atom -ffast-math -msse3 -mfpmath=sse -O3
 endif
 
 LOCAL_ASMFLAGS += -P$(LOCAL_PATH)/../ndk/$(LIBAV_CONFIG_TYPE)/config.asm
