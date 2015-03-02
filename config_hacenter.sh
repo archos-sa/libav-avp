@@ -1,0 +1,20 @@
+CONFIG_LIBAV="--enable-shared \
+	--disable-bzlib \
+	--disable-sse \
+	--disable-libfaac \
+	--disable-muxers \
+	--disable-bsfs \
+	--disable-avdevice \
+	--disable-devices \
+	--disable-filters \
+	--disable-encoders \
+	--disable-protocols \
+	--disable-demuxers \
+	--disable-parsers \
+	--disable-decoders \
+	--enable-protocol=file \
+	--enable-muxer=m4v \
+	--enable-muxer=mp4 \
+	--enable-encoder=mpeg4 \
+	--enable-encoder=aac \
+	"

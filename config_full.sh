@@ -1,0 +1,14 @@
+CONFIG_LIBAV="--enable-shared \
+	--disable-bzlib \
+	--disable-libfaac \
+	--disable-muxers \
+	--disable-bsfs \
+	--disable-avdevice \
+	--disable-devices \
+	--disable-filters \
+	--disable-encoders \
+	--enable-protocols \
+	--enable-demuxers \
+	--enable-parsers \
+	--enable-decoders \
+	--disable-decoder=opus"
