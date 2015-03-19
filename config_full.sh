@@ -7,6 +7,7 @@ CONFIG_LIBAV="--enable-shared \
 	--disable-devices \
 	--disable-filters \
 	--disable-encoders \
+	--enable-muxer=spdif \
 	--enable-protocols \
 	--enable-demuxers \
 	--enable-parsers \
