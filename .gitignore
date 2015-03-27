@@ -1,4 +1,3 @@
-config.asm
 ndk/base/libs/
 ndk/archos/libs/
 ndk/full/libs/
@@ -24,8 +23,6 @@ obj
 *.ver
 *-example
 *-test
-config.fate
-config.log
 /.config
 /.version
 /avconv
