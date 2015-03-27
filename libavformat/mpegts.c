@@ -151,6 +151,12 @@ struct MpegTSContext {
 
 static const AVOption options[] = {
     MPEGTS_OPTIONS,
+    {"no_pat", "Stream does not have a PAT, do not look for one.", offsetof(MpegTSContext, no_pat), AV_OPT_TYPE_INT,
+     {.dbl = 0}, 0, 1, AV_OPT_FLAG_DECODING_PARAM },
+    {"vpid", "PID of the video stream that must be found before we can start.", offsetof(MpegTSContext, vpid), AV_OPT_TYPE_INT,
+     {.dbl = 0}, 0, INT_MAX, AV_OPT_FLAG_DECODING_PARAM },
+    {"apid", "PID of the audio stream that must be found before we can start.", offsetof(MpegTSContext, apid), AV_OPT_TYPE_INT,
+     {.dbl = 0}, 0, INT_MAX, AV_OPT_FLAG_DECODING_PARAM },
     { NULL },
 };
 
@@ -177,23 +183,6 @@ static const AVClass mpegtsraw_class = {
     .class_name = "mpegtsraw demuxer",
     .item_name  = av_default_item_name,
     .option     = raw_options,
-    .version    = LIBAVUTIL_VERSION_INT,
-};
-
-static const AVOption options2[] = {
-    {"no_pat", "Stream does not have a PAT, do not look for one.", offsetof(MpegTSContext, no_pat), AV_OPT_TYPE_INT,
-     {.dbl = 0}, 0, 1, AV_OPT_FLAG_DECODING_PARAM },
-    {"vpid", "PID of the video stream that must be found before we can start.", offsetof(MpegTSContext, vpid), AV_OPT_TYPE_INT,
-     {.dbl = 0}, 0, INT_MAX, AV_OPT_FLAG_DECODING_PARAM },
-    {"apid", "PID of the audio stream that must be found before we can start.", offsetof(MpegTSContext, apid), AV_OPT_TYPE_INT,
-     {.dbl = 0}, 0, INT_MAX, AV_OPT_FLAG_DECODING_PARAM },
-    { NULL },
-};
-
-static const AVClass mpegts_class = {
-    .class_name = "mpegts demuxer",
-    .item_name  = av_default_item_name,
-    .option     = options2,
     .version    = LIBAVUTIL_VERSION_INT,
 };
 
@@ -1762,12 +1751,13 @@ static int has_codec_parameters(AVStream *st)
         val = 1;
         break;
     }
-    return avctx->codec_id != CODEC_ID_NONE && avctx->codec_id != CODEC_ID_PROBE && val != 0;
+    return avctx->codec_id != AV_CODEC_ID_NONE && avctx->codec_id != AV_CODEC_ID_PROBE && val != 0;
 }
 
 /* handle one TS packet */
 static int handle_packet(MpegTSContext *ts, const uint8_t *packet)
 {
+    AVFormatContext *s = ts->stream;
     MpegTSFilter *tss;
     int len, pid, cc, expected_cc, cc_ok, afc, is_start, is_discontinuity,
         has_adaptation, has_payload;
