@@ -102,8 +102,7 @@ static int mp3_read_probe(AVProbeData *p)
         if (pes)
             max_frames = (max_frames + pes - 1) / pes;
     }
-    if      (max_frames >  need_score) return AVPROBE_SCORE_MAX / 2;
-    if      (max_frames >  500) return AVPROBE_SCORE_EXTENSION;
+    if      (max_frames >  need_score) return AVPROBE_SCORE_EXTENSION;
     else if (max_frames >= 4)   return AVPROBE_SCORE_EXTENSION / 2;
     else if (max_frames >= 1)   return 1;
     else                        return 0;
