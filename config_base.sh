@@ -67,6 +67,7 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-demuxer=wtv \
 	--enable-demuxer=ac3 \
 	--enable-demuxer=ogg \
+	--enable-demuxer=flv \
 	\
 	--enable-protocol=file \
 	--enable-protocol=http \
