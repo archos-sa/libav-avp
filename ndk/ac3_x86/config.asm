@@ -270,6 +270,7 @@
 %define HAVE_LIBDC1394_1 0
 %define HAVE_LIBDC1394_2 0
 %define HAVE_SDL 0
+%define HAVE_SECTION_DATA_REL_RO 1
 %define HAVE_THREADS 1
 %define HAVE_VDPAU_X11 0
 %define HAVE_XLIB 0
