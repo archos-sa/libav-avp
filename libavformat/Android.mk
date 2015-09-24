@@ -13,10 +13,6 @@ LOCAL_C_INCLUDES :=		\
 LOCAL_CFLAGS += $(FFCFLAGS)
 #LOCAL_CFLAGS += -include "string.h" -Dipv6mr_interface=ipv6mr_ifindex
 
-ifeq ($(TARGET_ARCH_ABI),x86)
-LOCAL_CFLAGS += -DPIC -march=atom -ffast-math -msse3 -mfpmath=sse -O3
-endif
-
 LOCAL_ASMFLAGS += -P$(LOCAL_PATH)/../ndk/$(LIBAV_CONFIG_TYPE)/config.asm
 
 LOCAL_LDLIBS := -lz

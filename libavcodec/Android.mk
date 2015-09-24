@@ -12,10 +12,6 @@ LOCAL_C_INCLUDES :=		\
 
 LOCAL_CFLAGS += $(FFCFLAGS)
 
-ifeq ($(TARGET_ARCH_ABI),x86)
-LOCAL_CFLAGS += -DPIC -fasm -march=atom -ffast-math -msse3 -mfpmath=sse -O3 
-endif
-
 LOCAL_ASMFLAGS += -DPIC -P$(LOCAL_PATH)/../ndk/$(LIBAV_CONFIG_TYPE)/config.asm
 
 LOCAL_LDLIBS := -lz

@@ -77,9 +77,6 @@ function cflags ()
 			ext_cflags="-march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -marm"
 		fi
 	fi
-	if [ "$1" = "x86" ];then
-		ext_cflags="-O3 -fasm -march=atom -ffast-math -msse3 -mfpmath=sse"
-	fi
 	echo "$ext_cflags" \
 		"-I${NDK_ROOT}/platforms/`platform $1`/arch-${1}/usr/include" \
 		"-fPIC -DANDROID -DPIC"
@@ -109,11 +106,10 @@ function config_libav ()
 		if [ "$2" != "neon" ];then
 			ext_config="--disable-armv6 --disable-armv6t2 --disable-neon"
 		fi
-	elif [ "$1" = "x86" -o "$1" = "x86_64" ];then
-		ext_config=" --enable-asm --enable-yasm --enable-pic"
-	fi
-	if [ "$1" = "x86" ];then
-		ext_config+=" --cpu=i686"
+	elif [ "$1" = "x86_64" ];then
+		ext_config="--enable-asm --enable-yasm --enable-pic"
+	elif [ "$1" = "x86" ];then
+		ext_config+="--disable-asm --enable-pic --cpu=i686"
 	fi
 	echo ${ext_config} ${CONFIG_LIBAV}
 }
