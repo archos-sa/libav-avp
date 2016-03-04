@@ -85,6 +85,7 @@ CONFIG_LIBAV="--enable-shared \
 	--enable-parser=mpegvideo \
 	--enable-parser=flac \
 	--enable-parser=dca \
+	--enable-muxer=spdif \
 	\
 	--disable-static \
 	--disable-symver \
