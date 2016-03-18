@@ -2701,6 +2701,11 @@ case "$toolchain" in
         add_cflags  -fsanitize=address
         add_ldflags -fsanitize=address
     ;;
+    *-msan)
+        cc_default="${toolchain%-msan}"
+        add_cflags  -fsanitize=memory -fsanitize-memory-track-origins
+        add_ldflags -fsanitize=memory
+    ;;
     *-tsan)
         cc_default="${toolchain%-tsan}"
         add_cflags  -fsanitize=thread -pie
@@ -2772,6 +2777,10 @@ case "$toolchain" in
     gcov)
         add_cflags  -fprofile-arcs -ftest-coverage
         add_ldflags -fprofile-arcs -ftest-coverage
+    ;;
+    llvm-cov)
+        add_cflags -fprofile-arcs -ftest-coverage
+        add_ldflags --coverage
     ;;
     hardened)
         add_cppflags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2

@@ -473,9 +473,11 @@ static int mov_read_dref(MOVContext *c, AVIOContext *pb, MOVAtom atom)
 
     avio_rb32(pb); // version + flags
     entries = avio_rb32(pb);
-    if (entries >  (atom.size - 1) / MIN_DATA_ENTRY_BOX_SIZE + 1 ||
+    if (!entries ||
+        entries >  (atom.size - 1) / MIN_DATA_ENTRY_BOX_SIZE + 1 ||
         entries >= UINT_MAX / sizeof(*sc->drefs))
         return AVERROR_INVALIDDATA;
+    sc->drefs_count = 0;
     av_free(sc->drefs);
     sc->drefs = av_mallocz(entries * sizeof(*sc->drefs));
     if (!sc->drefs)
@@ -553,6 +555,13 @@ static int mov_read_dref(MOVContext *c, AVIOContext *pb, MOVAtom atom)
                         len -= volume_len;
                         memmove(dref->path, dref->path+volume_len, len);
                         dref->path[len] = 0;
+                    }
+                    // trim string of any ending zeros
+                    for (j = len - 1; j >= 0; j--) {
+                        if (dref->path[j] == 0)
+                            len--;
+                        else
+                            break;
                     }
                     for (j = 0; j < len; j++)
                         if (dref->path[j] == ':' || dref->path[j] == 0)
