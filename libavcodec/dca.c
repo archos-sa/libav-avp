@@ -67,3 +67,9 @@ int ff_dca_convert_bitstream(const uint8_t *src, int src_size, uint8_t *dst,
         return AVERROR_INVALIDDATA;
     }
 }
+
+int av_dca_convert_bitstream(const uint8_t *src, int src_size, uint8_t *dst,
+                             int max_size)
+{
+	return ff_dca_convert_bitstream(src, src_size, dst, max_size);
+}
